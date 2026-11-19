@@ -1,0 +1,3135 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>JEE Mains Countdown & Marks Predictor | Engineering Tracker</title>
+  <!-- Optional Tailwind CDN with offline fallback styling -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <style>
+    /* Complete self-contained styling for dark mode engineering dashboard */
+    :root {
+      --bg-base: #090d16;
+      --bg-surface: #0f172a;
+      --bg-surface-elevated: #1e293b;
+      --bg-surface-card: rgba(15, 23, 42, 0.75);
+      --border-subtle: #1e293b;
+      --border-medium: #334155;
+      --border-highlight: #475569;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --text-faint: #64748b;
+      
+      --emerald-accent: #10b981;
+      --emerald-glow: rgba(16, 185, 129, 0.2);
+      --emerald-bg: rgba(6, 78, 59, 0.35);
+      --emerald-border: rgba(16, 185, 129, 0.45);
+      
+      --amber-accent: #f59e0b;
+      --amber-glow: rgba(245, 158, 11, 0.18);
+      --amber-bg: rgba(120, 53, 15, 0.3);
+      --amber-border: rgba(245, 158, 11, 0.4);
+
+      --cyan-accent: #06b6d4;
+      --cyan-glow: rgba(6, 182, 212, 0.2);
+      
+      --physics-color: #38bdf8;
+      --chem-color: #a855f7;
+      --math-color: #f97316;
+      
+      --target-pin: #ec4899;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--bg-base);
+      color: var(--text-main);
+      font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      min-height: 100vh;
+      line-height: 1.5;
+      overflow-x: hidden;
+      background-image: 
+        radial-gradient(circle at 15% 10%, rgba(56, 189, 248, 0.07) 0%, transparent 40%),
+        radial-gradient(circle at 85% 20%, rgba(168, 85, 247, 0.06) 0%, transparent 45%),
+        radial-gradient(circle at 50% 90%, rgba(16, 185, 129, 0.05) 0%, transparent 50%);
+      background-attachment: fixed;
+    }
+
+    .font-mono {
+      font-family: 'JetBrains Mono', monospace, ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas;
+    }
+
+    /* Container */
+    .app-container {
+      max-width: 1540px;
+      margin: 0 auto;
+      padding: 1.25rem 1.5rem 3.5rem;
+    }
+
+    /* Glass Panels */
+    .glass-panel {
+      background: var(--bg-surface-card);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid var(--border-subtle);
+      border-radius: 1rem;
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.4), 0 8px 10px -6px rgba(0, 0, 0, 0.3);
+      transition: all 0.2s ease;
+    }
+
+    .glass-panel:hover {
+      border-color: var(--border-medium);
+    }
+
+    /* Header & Top Bar */
+    .header-bar {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1.25rem;
+      padding: 1.25rem 1.75rem;
+      margin-bottom: 1.5rem;
+      border-radius: 1.25rem;
+      background: linear-gradient(135deg, rgba(15, 23, 42, 0.85), rgba(30, 41, 59, 0.65));
+      border: 1px solid rgba(51, 65, 85, 0.6);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .header-bar::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, #38bdf8, #a855f7, #10b981, #f59e0b);
+    }
+
+    .brand-title {
+      font-size: 1.5rem;
+      font-weight: 800;
+      letter-spacing: -0.025em;
+      display: flex;
+      align-items: center;
+      gap: 0.65rem;
+    }
+
+    .badge-pill {
+      font-size: 0.72rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      padding: 0.2rem 0.6rem;
+      border-radius: 9999px;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+    }
+
+    .badge-cyan {
+      background: rgba(6, 182, 212, 0.15);
+      color: #38bdf8;
+      border: 1px solid rgba(6, 182, 212, 0.3);
+    }
+
+    .badge-emerald {
+      background: rgba(16, 185, 129, 0.15);
+      color: #34d399;
+      border: 1px solid rgba(16, 185, 129, 0.3);
+    }
+
+    .badge-amber {
+      background: rgba(245, 158, 11, 0.15);
+      color: #fbbf24;
+      border: 1px solid rgba(245, 158, 11, 0.3);
+    }
+
+    /* Countdown Grid */
+    .countdown-widget {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      background: rgba(10, 15, 29, 0.7);
+      border: 1px solid rgba(51, 65, 85, 0.8);
+      padding: 0.5rem 0.85rem;
+      border-radius: 0.85rem;
+    }
+
+    .countdown-unit {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-width: 3.25rem;
+      background: rgba(15, 23, 42, 0.9);
+      padding: 0.35rem 0.45rem;
+      border-radius: 0.5rem;
+      border: 1px solid rgba(71, 85, 105, 0.4);
+    }
+
+    .countdown-digits {
+      font-size: 1.35rem;
+      font-weight: 800;
+      color: #f8fafc;
+      line-height: 1.1;
+      text-shadow: 0 0 12px rgba(56, 189, 248, 0.4);
+    }
+
+    .countdown-label {
+      font-size: 0.62rem;
+      text-transform: uppercase;
+      font-weight: 600;
+      color: #94a3b8;
+      letter-spacing: 0.08em;
+      margin-top: 0.15rem;
+    }
+
+    .countdown-colon {
+      font-weight: 700;
+      color: #64748b;
+      font-size: 1.2rem;
+      margin-bottom: 0.25rem;
+    }
+
+    /* Action Buttons */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      padding: 0.48rem 0.9rem;
+      font-size: 0.82rem;
+      font-weight: 600;
+      border-radius: 0.6rem;
+      cursor: pointer;
+      border: 1px solid transparent;
+      transition: all 0.15s ease;
+      white-space: nowrap;
+      user-select: none;
+      background: transparent;
+      color: var(--text-main);
+    }
+
+    .btn:active {
+      transform: translateY(1px);
+    }
+
+    .btn-secondary {
+      background: rgba(30, 41, 59, 0.8);
+      border-color: var(--border-medium);
+      color: var(--text-main);
+    }
+
+    .btn-secondary:hover {
+      background: rgba(51, 65, 85, 0.8);
+      border-color: var(--border-highlight);
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #0284c7, #2563eb);
+      border-color: rgba(56, 189, 248, 0.5);
+      color: #ffffff;
+      box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+    }
+
+    .btn-primary:hover {
+      background: linear-gradient(135deg, #0369a1, #1d4ed8);
+    }
+
+    .btn-emerald {
+      background: linear-gradient(135deg, #059669, #10b981);
+      border-color: rgba(52, 211, 153, 0.5);
+      color: #ffffff;
+      box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+    }
+
+    .btn-emerald:hover {
+      background: linear-gradient(135deg, #047857, #059669);
+    }
+
+    .btn-danger {
+      background: rgba(225, 29, 72, 0.15);
+      border-color: rgba(244, 63, 94, 0.4);
+      color: #fb7185;
+    }
+
+    .btn-danger:hover {
+      background: rgba(225, 29, 72, 0.3);
+      color: #ffffff;
+    }
+
+    .btn-icon {
+      padding: 0.45rem;
+      border-radius: 0.5rem;
+      border: 1px solid var(--border-subtle);
+      background: rgba(30, 41, 59, 0.6);
+      color: var(--text-muted);
+    }
+
+    .btn-icon:hover {
+      color: var(--text-main);
+      background: rgba(51, 65, 85, 0.8);
+      border-color: var(--border-medium);
+    }
+
+    /* Inputs */
+    .input-field {
+      background: rgba(15, 23, 42, 0.8);
+      border: 1px solid var(--border-medium);
+      color: var(--text-main);
+      padding: 0.45rem 0.75rem;
+      border-radius: 0.55rem;
+      font-size: 0.85rem;
+      outline: none;
+      transition: border-color 0.15s, box-shadow 0.15s;
+    }
+
+    .input-field:focus {
+      border-color: #38bdf8;
+      box-shadow: 0 0 0 2px rgba(56, 189, 248, 0.2);
+    }
+
+    /* Dashboard Metrics Cards (4-col desktop, 2-col tablet, 1-col mobile) */
+    .metrics-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1.25rem;
+      margin-bottom: 1.5rem;
+    }
+
+    @media (max-width: 1024px) {
+      .metrics-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1rem;
+      }
+    }
+
+    @media (max-width: 640px) {
+      .metrics-grid {
+        grid-template-columns: 1fr;
+        gap: 0.75rem;
+      }
+    }
+
+    .metric-card {
+      padding: 1.25rem 1.4rem;
+      position: relative;
+      overflow: hidden;
+      border-radius: 1rem;
+    }
+
+    .metric-card::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      right: 0;
+      width: 70px;
+      height: 70px;
+      border-radius: 50%;
+      filter: blur(28px);
+      pointer-events: none;
+    }
+
+    .metric-card.min-card::after { background: rgba(16, 185, 129, 0.2); }
+    .metric-card.max-card::after { background: rgba(56, 189, 248, 0.25); }
+    .metric-card.target-card::after { background: rgba(236, 72, 153, 0.25); }
+    .metric-card.mastered-card::after { background: rgba(245, 158, 11, 0.2); }
+
+    .metric-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 0.5rem;
+    }
+
+    .metric-title {
+      font-size: 0.78rem;
+      text-transform: uppercase;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      gap: 0.45rem;
+    }
+
+    .metric-value {
+      font-size: 2.25rem;
+      font-weight: 800;
+      line-height: 1.1;
+      letter-spacing: -0.03em;
+    }
+
+    .metric-sub {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      margin-top: 0.4rem;
+      display: flex;
+      align-items: center;
+      gap: 0.35rem;
+    }
+
+    /* Dual Progress Bar Main Panel */
+    .prediction-panel {
+      padding: 1.5rem 1.75rem;
+      margin-bottom: 1.5rem;
+      position: relative;
+    }
+
+    .prediction-top {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: flex-end;
+      gap: 1rem;
+      margin-bottom: 1.25rem;
+    }
+
+    .score-range-headline {
+      display: flex;
+      align-items: baseline;
+      gap: 0.75rem;
+      flex-wrap: wrap;
+    }
+
+    .score-range-numbers {
+      font-size: 2.35rem;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      color: #ffffff;
+      text-shadow: 0 0 20px rgba(16, 185, 129, 0.3);
+    }
+
+    .score-target-denom {
+      font-size: 1.25rem;
+      font-weight: 600;
+      color: var(--text-faint);
+    }
+
+    /* The visual dual bar container */
+    .dual-progress-track {
+      position: relative;
+      height: 2.35rem;
+      background: #090e1a;
+      border: 1px solid var(--border-medium);
+      border-radius: 0.75rem;
+      overflow: visible;
+      margin: 1.75rem 0 0.85rem;
+      box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.6);
+    }
+
+    .bar-max-potential {
+      position: absolute;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      background: linear-gradient(90deg, rgba(16, 185, 129, 0.4), rgba(6, 182, 212, 0.75));
+      border-radius: 0.7rem;
+      transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      box-shadow: 0 0 15px rgba(6, 182, 212, 0.3);
+    }
+
+    .bar-min-guaranteed {
+      position: absolute;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      background: linear-gradient(90deg, #059669, #10b981);
+      border-radius: 0.7rem;
+      transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      z-index: 2;
+      box-shadow: 0 0 15px rgba(16, 185, 129, 0.5);
+    }
+
+    .target-marker-line {
+      position: absolute;
+      top: -10px;
+      bottom: -10px;
+      width: 3px;
+      background: #ec4899;
+      z-index: 5;
+      transform: translateX(-50%);
+      box-shadow: 0 0 12px #ec4899, 0 0 24px #ec4899;
+      pointer-events: none;
+      transition: left 0.3s ease;
+    }
+
+    .target-marker-flag {
+      position: absolute;
+      top: -30px;
+      transform: translateX(-50%);
+      background: #ec4899;
+      color: #ffffff;
+      font-size: 0.72rem;
+      font-weight: 700;
+      padding: 0.15rem 0.5rem;
+      border-radius: 0.35rem;
+      white-space: nowrap;
+      box-shadow: 0 2px 8px rgba(236, 72, 153, 0.5);
+      z-index: 10;
+      transition: left 0.3s ease;
+    }
+
+    .target-marker-flag::after {
+      content: '';
+      position: absolute;
+      bottom: -4px;
+      left: 50%;
+      transform: translateX(-50%);
+      border-width: 4px 4px 0;
+      border-style: solid;
+      border-color: #ec4899 transparent;
+      display: block;
+      width: 0;
+    }
+
+    .scale-ticks {
+      display: flex;
+      justify-content: space-between;
+      color: var(--text-faint);
+      font-size: 0.72rem;
+      font-weight: 600;
+      margin-top: 0.5rem;
+      padding: 0 2px;
+    }
+
+    /* Dual bar legend */
+    .bar-legend {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1.5rem;
+      margin-top: 1rem;
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 0.45rem;
+    }
+
+    .legend-dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 3px;
+    }
+
+    /* Smart Triage & Filter Toolbar */
+    .toolbar-container {
+      padding: 1.25rem 1.5rem;
+      margin-bottom: 1.5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .toolbar-row {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 0.85rem;
+    }
+
+    .filter-pills-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.4rem;
+      background: rgba(10, 15, 29, 0.6);
+      padding: 0.3rem;
+      border-radius: 0.75rem;
+      border: 1px solid var(--border-subtle);
+    }
+
+    .filter-pill {
+      background: transparent;
+      border: 1px solid transparent;
+      color: var(--text-muted);
+      font-size: 0.8rem;
+      font-weight: 700;
+      padding: 0.45rem 0.85rem;
+      min-height: 42px; /* 36-44px touch target */
+      border-radius: 0.6rem;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      display: flex;
+      align-items: center;
+      gap: 0.45rem;
+      touch-action: manipulation;
+      -webkit-tap-highlight-color: transparent;
+      user-select: none;
+    }
+
+    .filter-pill:hover {
+      color: var(--text-main);
+      background: rgba(51, 65, 85, 0.4);
+    }
+
+    .filter-pill.active {
+      background: var(--bg-surface-elevated);
+      color: #38bdf8;
+      border-color: rgba(56, 189, 248, 0.35);
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
+    }
+
+    .view-mode-group {
+      display: flex;
+      background: rgba(10, 15, 29, 0.6);
+      padding: 0.25rem;
+      border-radius: 0.75rem;
+      border: 1px solid var(--border-subtle);
+      gap: 0.25rem;
+    }
+
+    .view-btn {
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      font-size: 0.8rem;
+      font-weight: 600;
+      padding: 0.35rem 0.65rem;
+      border-radius: 0.5rem;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      display: flex;
+      align-items: center;
+      gap: 0.35rem;
+    }
+
+    .view-btn.active {
+      background: var(--bg-surface-elevated);
+      color: #f8fafc;
+      border: 1px solid var(--border-medium);
+    }
+
+    /* Smart Recommendation Banner */
+    .smart-recommendation-banner {
+      background: linear-gradient(135deg, rgba(245, 158, 11, 0.1), rgba(16, 185, 129, 0.08));
+      border: 1px solid rgba(245, 158, 11, 0.25);
+      border-radius: 0.85rem;
+      padding: 0.85rem 1.25rem;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.85rem;
+    }
+
+    .rec-tag-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      align-items: center;
+    }
+
+    .rec-item-chip {
+      background: rgba(15, 23, 42, 0.85);
+      border: 1px solid var(--border-medium);
+      padding: 0.3rem 0.65rem;
+      border-radius: 0.5rem;
+      font-size: 0.78rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 0.45rem;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+
+    .rec-item-chip:hover {
+      border-color: #38bdf8;
+      transform: translateY(-1px);
+    }
+
+    /* Chapter Grid & Columns */
+    .pcm-grid {
+      display: grid;
+      gap: 1.5rem;
+      align-items: start;
+    }
+
+    .pcm-grid.cols-3 {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .pcm-grid.cols-1 {
+      grid-template-columns: minmax(0, 1fr);
+    }
+
+    @media (max-width: 1200px) {
+      .pcm-grid.cols-3 {
+        grid-template-columns: repeat(1, minmax(0, 1fr));
+      }
+    }
+
+    /* Subject Column Container */
+    .subject-column {
+      background: var(--bg-surface-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: 1.15rem;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.3);
+    }
+
+    .subject-col-header {
+      padding: 1.15rem 1.35rem;
+      border-bottom: 1px solid var(--border-subtle);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: rgba(15, 23, 42, 0.9);
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      backdrop-filter: blur(12px);
+    }
+
+    .subject-title {
+      font-size: 1.1rem;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      gap: 0.55rem;
+    }
+
+    .physics-accent { color: var(--physics-color); }
+    .chem-accent { color: var(--chem-color); }
+    .math-accent { color: var(--math-color); }
+
+    .subject-stats-pill {
+      font-size: 0.75rem;
+      font-weight: 700;
+      background: rgba(30, 41, 59, 0.8);
+      padding: 0.25rem 0.6rem;
+      border-radius: 9999px;
+      border: 1px solid var(--border-medium);
+      color: var(--text-muted);
+    }
+
+    .chapter-list {
+      padding: 0.85rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.65rem;
+      max-height: 800px;
+      overflow-y: auto;
+    }
+
+    .chapter-list::-webkit-scrollbar {
+      width: 6px;
+    }
+    .chapter-list::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    .chapter-list::-webkit-scrollbar-thumb {
+      background: rgba(51, 65, 85, 0.5);
+      border-radius: 9999px;
+    }
+
+    /* Individual Chapter Card Row */
+    .chapter-card {
+      background: rgba(15, 23, 42, 0.6);
+      border: 1px solid var(--border-subtle);
+      border-radius: 0.75rem;
+      padding: 0.75rem 0.9rem;
+      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+      position: relative;
+    }
+
+    .chapter-card:hover {
+      border-color: var(--border-medium);
+      background: rgba(30, 41, 59, 0.5);
+    }
+
+    /* Mastered State: Subtle Green Highlight */
+    .chapter-card.status-mastered {
+      background: var(--emerald-bg);
+      border-color: var(--emerald-border);
+      box-shadow: 0 0 15px var(--emerald-glow);
+    }
+
+    .chapter-card.status-mastered::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      width: 3px;
+      background: #10b981;
+      border-radius: 4px 0 0 4px;
+    }
+
+    /* In-Progress State: Subtle Amber Highlight */
+    .chapter-card.status-in-progress {
+      background: var(--amber-bg);
+      border-color: var(--amber-border);
+    }
+
+    .chapter-card.status-in-progress::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      width: 3px;
+      background: #f59e0b;
+      border-radius: 4px 0 0 4px;
+    }
+
+    .chapter-card-top {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 0.65rem;
+      margin-bottom: 0.65rem;
+    }
+
+    .chapter-name-wrap {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .chapter-title {
+      font-size: 0.88rem;
+      font-weight: 700;
+      color: var(--text-main);
+      line-height: 1.35;
+      word-break: break-word;
+    }
+
+    .chapter-marks-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.25rem;
+      font-size: 0.72rem;
+      font-weight: 700;
+      padding: 0.15rem 0.45rem;
+      border-radius: 0.4rem;
+      background: rgba(10, 15, 29, 0.85);
+      border: 1px solid var(--border-medium);
+      color: #38bdf8;
+      cursor: pointer;
+      transition: all 0.15s;
+      white-space: nowrap;
+    }
+
+    .chapter-marks-badge:hover {
+      border-color: #38bdf8;
+    }
+
+    .chapter-marks-badge.high-yield {
+      color: #fbbf24;
+      border-color: rgba(245, 158, 11, 0.4);
+      background: rgba(120, 53, 15, 0.3);
+    }
+
+    /* The 3 Checkboxes Bar */
+    .checkbox-group {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0.45rem;
+      margin-top: 0.5rem;
+    }
+
+    .check-btn-label {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.4rem;
+      padding: 0.45rem 0.35rem;
+      min-height: 42px; /* 36-44px touch target */
+      font-size: 0.76rem;
+      font-weight: 700;
+      border-radius: 0.55rem;
+      background: rgba(10, 15, 29, 0.7);
+      border: 1px solid var(--border-subtle);
+      color: var(--text-muted);
+      cursor: pointer;
+      user-select: none;
+      transition: all 0.15s ease;
+      touch-action: manipulation;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .check-btn-label:hover {
+      background: rgba(30, 41, 59, 0.8);
+      color: var(--text-main);
+      border-color: var(--border-medium);
+    }
+
+    .check-btn-label.checked {
+      background: rgba(16, 185, 129, 0.2);
+      border-color: rgba(16, 185, 129, 0.5);
+      color: #34d399;
+      box-shadow: inset 0 0 8px rgba(16, 185, 129, 0.15);
+    }
+
+    .check-btn-label input[type="checkbox"] {
+      appearance: none;
+      -webkit-appearance: none;
+      width: 17px;
+      height: 17px;
+      min-width: 17px;
+      border: 1.5px solid #64748b;
+      border-radius: 4px;
+      outline: none;
+      background: transparent;
+      cursor: pointer;
+      display: inline-grid;
+      place-content: center;
+      transition: all 0.15s ease;
+      margin: 0;
+    }
+
+    .check-btn-label.checked input[type="checkbox"] {
+      border-color: #10b981;
+      background: #10b981;
+    }
+
+    .check-btn-label.checked input[type="checkbox"]::before {
+      content: "";
+      width: 8px;
+      height: 5px;
+      border-left: 2px solid white;
+      border-bottom: 2px solid white;
+      transform: rotate(-45deg) translate(1px, -1px);
+    }
+
+    /* Chapter Row Actions */
+    .chapter-actions {
+      display: flex;
+      align-items: center;
+      gap: 0.35rem;
+    }
+
+    /* Modal / Popups */
+    .modal-backdrop {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(4, 7, 14, 0.85);
+      backdrop-filter: blur(8px);
+      z-index: 1000;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 1rem;
+    }
+
+    .modal-backdrop.open {
+      display: flex;
+      animation: fadeIn 0.15s ease-out;
+    }
+
+    .modal-box {
+      background: #0f172a;
+      border: 1px solid var(--border-medium);
+      border-radius: 1.25rem;
+      width: 100%;
+      max-width: 520px;
+      padding: 1.75rem;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.6);
+      position: relative;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: scale(0.97); }
+      to { opacity: 1; transform: scale(1); }
+    }
+
+    /* Confetti Canvas */
+    #confetti-canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      pointer-events: none;
+      z-index: 9999;
+    }
+
+    /* Toast Notification */
+    .toast-container {
+      position: fixed;
+      bottom: 1.5rem;
+      right: 1.5rem;
+      z-index: 2000;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      pointer-events: none;
+    }
+
+    .toast {
+      background: #1e293b;
+      border: 1px solid var(--border-medium);
+      color: #f8fafc;
+      padding: 0.75rem 1.15rem;
+      border-radius: 0.75rem;
+      font-size: 0.85rem;
+      font-weight: 600;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+      display: flex;
+      align-items: center;
+      gap: 0.65rem;
+      animation: toastIn 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+      pointer-events: auto;
+    }
+
+    @keyframes toastIn {
+      from { transform: translateY(15px); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+
+    /* Subject Tab Switcher Styles */
+    .subject-tab-wrapper {
+      width: 100%;
+      border-top: 1px solid var(--border-subtle);
+      padding-top: 0.85rem;
+    }
+
+    .subject-tab-buttons {
+      display: flex;
+      gap: 0.45rem;
+      width: 100%;
+    }
+
+    .subject-tab-btn {
+      flex: 1;
+      min-height: 44px; /* 44px thumb touch target */
+      padding: 0.45rem 0.5rem;
+      border-radius: 0.65rem;
+      background: rgba(15, 23, 42, 0.7);
+      border: 1px solid var(--border-medium);
+      color: var(--text-muted);
+      font-size: 0.82rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.45rem;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      touch-action: manipulation;
+      -webkit-tap-highlight-color: transparent;
+      user-select: none;
+      min-width: 0;
+    }
+
+    .subject-tab-btn:hover {
+      background: rgba(30, 41, 59, 0.8);
+      color: var(--text-main);
+    }
+
+    .tab-indicator {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    .tab-count-badge {
+      font-size: 0.68rem;
+      background: rgba(10, 15, 29, 0.8);
+      padding: 0.1rem 0.38rem;
+      border-radius: 9999px;
+      border: 1px solid rgba(71, 85, 105, 0.5);
+      flex-shrink: 0;
+    }
+
+    .subject-tab-btn.tab-btn-physics.active {
+      background: rgba(56, 189, 248, 0.15);
+      border-color: var(--physics-color);
+      color: #38bdf8;
+      box-shadow: 0 0 15px rgba(56, 189, 248, 0.2);
+    }
+
+    .subject-tab-btn.tab-btn-chemistry.active {
+      background: rgba(168, 85, 247, 0.15);
+      border-color: var(--chem-color);
+      color: #c084fc;
+      box-shadow: 0 0 15px rgba(168, 85, 247, 0.2);
+    }
+
+    .subject-tab-btn.tab-btn-mathematics.active {
+      background: rgba(249, 115, 22, 0.15);
+      border-color: var(--math-color);
+      color: #fb923c;
+      box-shadow: 0 0 15px rgba(249, 115, 22, 0.2);
+    }
+
+    /* Target score editor and action helpers */
+    .target-score-editor-box {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      background: rgba(10, 15, 29, 0.75);
+      padding: 0.5rem 0.85rem;
+      border-radius: 0.75rem;
+      border: 1px solid var(--border-medium);
+    }
+
+    .target-preset-btn {
+      padding: 0.15rem 0.5rem;
+      font-size: 0.7rem;
+    }
+
+    .header-controls-wrap {
+      display: flex;
+      align-items: center;
+      gap: 0.85rem;
+      flex-wrap: wrap;
+    }
+
+    .header-actions-group {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .search-sort-group {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      flex: 1;
+      flex-wrap: wrap;
+    }
+
+    .search-input-wrap {
+      position: relative;
+      min-width: 240px;
+      flex: 1;
+    }
+
+    .sort-select-wrap {
+      display: flex;
+      align-items: center;
+      gap: 0.45rem;
+    }
+
+    /* =====================================================================
+       COMPREHENSIVE RESPONSIVE STYLES (MOBILE 360px-430px & TABLETS)
+       ===================================================================== */
+    @media (max-width: 768px) {
+      body {
+        overflow-x: hidden;
+      }
+
+      .app-container {
+        padding: 0.65rem 0.65rem 3rem;
+        overflow-x: hidden;
+        max-width: 100vw;
+      }
+
+      /* 1. Header & Live Countdown Stacking & Compact Unit row */
+      .header-bar {
+        flex-direction: column;
+        align-items: stretch;
+        padding: 0.85rem 0.85rem;
+        gap: 0.75rem;
+        margin-bottom: 0.9rem;
+      }
+
+      .brand-title {
+        font-size: 1.25rem;
+        justify-content: flex-start;
+      }
+
+      .brand-title svg {
+        width: 24px;
+        height: 24px;
+      }
+
+      .brand-subtitle {
+        font-size: 0.72rem;
+        line-height: 1.35;
+      }
+
+      .header-controls-wrap {
+        flex-direction: column;
+        width: 100%;
+        gap: 0.65rem;
+      }
+
+      /* All 4 countdown boxes fit on one row on 360px-430px mobile */
+      .countdown-widget {
+        width: 100%;
+        padding: 0.35rem 0.4rem;
+        gap: 0.2rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        box-sizing: border-box;
+      }
+
+      .countdown-unit {
+        min-width: 0;
+        flex: 1;
+        padding: 0.35rem 0.15rem;
+        border-radius: 0.45rem;
+      }
+
+      .countdown-digits {
+        font-size: 1.15rem;
+        line-height: 1.1;
+      }
+
+      .countdown-label {
+        font-size: 0.58rem;
+        letter-spacing: 0.03em;
+        margin-top: 0.1rem;
+      }
+
+      .countdown-colon {
+        font-size: 1rem;
+        margin-bottom: 0.15rem;
+        padding: 0 1px;
+      }
+
+      .header-actions-group {
+        width: 100%;
+        display: flex;
+        gap: 0.45rem;
+      }
+
+      .date-edit-btn {
+        flex: 1;
+        min-height: 42px;
+        justify-content: center;
+        font-size: 0.82rem;
+      }
+
+      .header-actions-group .btn-icon {
+        min-width: 42px;
+        min-height: 42px;
+      }
+
+      /* 2. Score Prediction Dashboard on Mobile */
+      .prediction-panel {
+        padding: 1rem 0.85rem;
+        margin-bottom: 0.9rem;
+      }
+
+      .prediction-top {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 0.85rem;
+        margin-bottom: 1rem;
+      }
+
+      .score-range-headline {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.3rem;
+      }
+
+      .score-range-numbers {
+        font-size: 1.85rem;
+        line-height: 1.1;
+      }
+
+      .score-target-denom {
+        font-size: 0.95rem;
+      }
+
+      .target-score-editor-box {
+        width: 100%;
+        justify-content: space-between;
+        padding: 0.65rem 0.75rem;
+      }
+
+      .target-preset-btn {
+        min-height: 36px;
+        padding: 0.3rem 0.65rem;
+        font-size: 0.74rem;
+      }
+
+      .dual-progress-track {
+        height: 1.9rem;
+        margin: 1.5rem 0 0.4rem;
+      }
+
+      .target-marker-flag {
+        top: -24px;
+        font-size: 0.64rem;
+        padding: 0.12rem 0.38rem;
+      }
+
+      .scale-ticks {
+        font-size: 0.62rem;
+      }
+
+      .bar-legend {
+        flex-direction: column;
+        gap: 0.4rem;
+        font-size: 0.75rem;
+        margin-top: 0.75rem;
+      }
+
+      #percentile-estimate-pill {
+        margin-left: 0;
+        align-self: flex-start;
+      }
+
+      /* 3. Toolbar & Filters on Mobile */
+      .toolbar-container {
+        padding: 0.85rem 0.85rem;
+        gap: 0.75rem;
+        margin-bottom: 0.9rem;
+      }
+
+      .toolbar-row {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 0.65rem;
+      }
+
+      /* 2x2 grid for filter pills on mobile with 44px thumb hit area */
+      .filter-pills-group {
+        width: 100%;
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 0.4rem;
+        padding: 0.3rem;
+      }
+
+      .filter-pill {
+        min-height: 44px;
+        justify-content: center;
+        text-align: center;
+        padding: 0.45rem 0.4rem;
+        font-size: 0.76rem;
+      }
+
+      /* Hide 3-col grid switcher on screens < 768px */
+      .view-mode-group {
+        display: none !important;
+      }
+
+      .search-sort-group {
+        flex-direction: column;
+        align-items: stretch;
+        width: 100%;
+        gap: 0.65rem;
+      }
+
+      .search-input-wrap {
+        width: 100% !important;
+        min-width: 0 !important;
+      }
+
+      #search-input {
+        width: 100% !important;
+        min-height: 42px;
+        font-size: 16px; /* Avoids auto zoom on iOS */
+      }
+
+      .sort-select-wrap {
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+      }
+
+      #sort-select {
+        flex: 1;
+        min-height: 42px;
+        font-size: 0.85rem;
+      }
+
+      .add-chapter-btn-wrap {
+        width: 100%;
+      }
+
+      .add-chapter-btn {
+        width: 100%;
+        min-height: 44px;
+        justify-content: center;
+      }
+
+      /* 4. PCM Chapters on Mobile: Force Subject Tab Switcher Full Width */
+      #subject-tab-bar {
+        display: block !important;
+        padding-top: 0.65rem;
+      }
+
+      .pcm-grid {
+        grid-template-columns: 1fr !important;
+        gap: 0.85rem;
+      }
+
+      .subject-column {
+        width: 100% !important;
+        border-radius: 1rem;
+      }
+
+      .subject-col-header {
+        padding: 0.85rem 1rem;
+      }
+
+      .subject-title {
+        font-size: 1rem;
+      }
+
+      .chapter-list {
+        padding: 0.65rem 0.5rem;
+        max-height: none;
+      }
+
+      .chapter-card {
+        padding: 0.75rem 0.65rem;
+        border-radius: 0.75rem;
+      }
+
+      .chapter-title {
+        font-size: 0.85rem;
+        line-height: 1.35;
+      }
+
+      .chapter-marks-badge {
+        font-size: 0.7rem;
+        padding: 0.2rem 0.45rem;
+        min-height: 28px;
+      }
+
+      .checkbox-group {
+        gap: 0.35rem;
+        margin-top: 0.45rem;
+      }
+
+      .check-btn-label {
+        min-height: 42px; /* Thumb-friendly 42px touch hit area */
+        padding: 0.4rem 0.2rem;
+        font-size: 0.74rem;
+      }
+
+      .check-btn-label input[type="checkbox"] {
+        width: 16px;
+        height: 16px;
+        min-width: 16px;
+      }
+
+      /* Smart recommendation banner */
+      .smart-recommendation-banner {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 0.65rem;
+        padding: 0.75rem 0.85rem;
+      }
+
+      .rec-tag-group {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 0.45rem;
+      }
+
+      .rec-item-chip {
+        width: 100%;
+        justify-content: space-between;
+        min-height: 40px;
+        padding: 0.4rem 0.65rem;
+      }
+
+      /* Modals */
+      .modal-box {
+        max-width: calc(100vw - 1.25rem);
+        padding: 1.25rem 1rem;
+        margin: 0.6rem;
+      }
+    }
+    /* Print Styles */
+    @media print {
+      body {
+        background: #ffffff !important;
+        color: #000000 !important;
+      }
+      .app-container {
+        max-width: 100% !important;
+        padding: 0 !important;
+      }
+      .header-bar, .prediction-panel, .toolbar-container, .modal-backdrop, #confetti-canvas, .btn, .btn-icon {
+        background: #f8fafc !important;
+        color: #000000 !important;
+        border-color: #cbd5e1 !important;
+        box-shadow: none !important;
+      }
+      .chapter-card {
+        page-break-inside: avoid;
+        background: #ffffff !important;
+        border: 1px solid #cbd5e1 !important;
+        color: #000000 !important;
+      }
+      .pcm-grid.cols-3 {
+        display: block !important;
+      }
+      .subject-column {
+        margin-bottom: 2rem !important;
+        page-break-after: always;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Canvas for celebration confetti -->
+  <canvas id="confetti-canvas"></canvas>
+
+  <div class="app-container">
+    
+    <!-- HEADER & LIVE COUNTDOWN -->
+    <header class="header-bar">
+      <div class="brand-container">
+        <div class="brand-title">
+          <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" class="physics-accent">
+            <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+          </svg>
+          <span>JEE Mains <span class="physics-accent">Tracker</span></span>
+          <span class="badge-pill badge-cyan">Mission 2027</span>
+        </div>
+        <div class="brand-subtitle">
+          Countdown, Dynamic Marks Predictor & High-Yield Strategy Engine
+        </div>
+      </div>
+
+      <!-- Real-Time Ticking Countdown & Actions -->
+      <div class="header-controls-wrap">
+        <div class="countdown-widget" id="countdown-box" title="Real-time live countdown to target exam">
+          <div class="countdown-unit">
+            <div class="countdown-digits font-mono" id="cd-days">000</div>
+            <div class="countdown-label">Days</div>
+          </div>
+          <div class="countdown-colon">:</div>
+          <div class="countdown-unit">
+            <div class="countdown-digits font-mono" id="cd-hours">00</div>
+            <div class="countdown-label">Hours</div>
+          </div>
+          <div class="countdown-colon">:</div>
+          <div class="countdown-unit">
+            <div class="countdown-digits font-mono" id="cd-minutes">00</div>
+            <div class="countdown-label">Mins</div>
+          </div>
+          <div class="countdown-colon">:</div>
+          <div class="countdown-unit">
+            <div class="countdown-digits font-mono" id="cd-seconds">00</div>
+            <div class="countdown-label">Secs</div>
+          </div>
+        </div>
+
+        <!-- Controls: Date Picker & Settings -->
+        <div class="header-actions-group">
+          <button class="btn btn-secondary date-edit-btn" onclick="openDateModal()" title="Edit Target Exam Date">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+              <line x1="16" y1="2" x2="16" y2="6"></line>
+              <line x1="8" y1="2" x2="8" y2="6"></line>
+              <line x1="3" y1="10" x2="21" y2="10"></line>
+            </svg>
+            <span id="header-date-text">Jan 22, 2027</span>
+          </button>
+
+          <button class="btn btn-secondary btn-icon" onclick="exportData()" title="Export JSON Backup">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+              <polyline points="7 10 12 15 17 10"></polyline>
+              <line x1="12" y1="15" x2="12" y2="3"></line>
+            </svg>
+          </button>
+          
+          <button class="btn btn-secondary btn-icon" onclick="triggerImport()" title="Import JSON Backup">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+              <polyline points="17 8 12 3 7 8"></polyline>
+              <line x1="12" y1="3" x2="12" y2="15"></line>
+            </svg>
+          </button>
+          <input type="file" id="import-file-input" style="display: none;" accept=".json" onchange="handleFileImport(event)">
+
+          <button class="btn btn-secondary btn-icon" onclick="openResetModal()" title="Reset to Default Syllabus">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="1 4 1 10 7 10"></polyline>
+              <polyline points="23 20 23 14 17 14"></polyline>
+              <path d="M20.49 9A9 9 0 0 0 5.64 5.64L1 10m22 4l-4.64 4.36A9 9 0 0 1 3.51 15"></path>
+            </svg>
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <!-- REAL-TIME SCORE PREDICTION DASHBOARD -->
+    <section class="glass-panel prediction-panel">
+      <div class="prediction-top">
+        <div>
+          <div class="metric-title" style="margin-bottom: 0.35rem;">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="physics-accent">
+              <circle cx="12" cy="12" r="10"></circle>
+              <circle cx="12" cy="12" r="6"></circle>
+              <circle cx="12" cy="12" r="2"></circle>
+            </svg>
+            Current Projected Score Range
+          </div>
+          <div class="score-range-headline">
+            <span class="score-range-numbers font-mono" id="score-range-display">0 – 0</span>
+            <span class="score-target-denom font-mono">/ <span id="target-score-denom">150</span> Target <span style="font-size: 0.85rem; color: #64748b;">(Max JEE: 300)</span></span>
+            <span id="target-achievement-badge" class="badge-pill badge-cyan">Calculating...</span>
+          </div>
+        </div>
+
+        <!-- Target Score Quick Editor -->
+        <div class="target-score-editor-box">
+          <div>
+            <div style="font-size: 0.68rem; text-transform: uppercase; font-weight: 700; color: var(--text-muted); letter-spacing: 0.05em;">Target Score</div>
+            <div style="display: flex; align-items: center; gap: 0.4rem; margin-top: 0.2rem;">
+              <input type="number" id="target-score-input" min="0" max="300" step="5" value="150" 
+                     class="input-field font-mono" style="width: 85px; font-weight: 800; font-size: 1.1rem; padding: 0.25rem 0.5rem; text-align: center;"
+                     onchange="updateTargetScore(this.value)" oninput="updateTargetScore(this.value)">
+              <span class="font-mono" style="color: var(--text-faint); font-weight: 700;">/ 300</span>
+            </div>
+          </div>
+          <div style="display: flex; flex-direction: column; gap: 0.25rem;">
+            <button class="btn btn-secondary target-preset-btn" onclick="setTargetPreset(180)">180 (98.5%ile)</button>
+            <button class="btn btn-secondary target-preset-btn" onclick="setTargetPreset(210)">210 (99.2%ile)</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- VISUAL DUAL PROGRESS BAR -->
+      <div class="dual-progress-track" id="dual-bar-container">
+        <!-- Max Potential Score Bar (cyan/gradient) -->
+        <div class="bar-max-potential" id="bar-max" style="width: 0%;"></div>
+        <!-- Min Guaranteed Score Bar (solid emerald) -->
+        <div class="bar-min-guaranteed" id="bar-min" style="width: 0%;"></div>
+        
+        <!-- Target Marker Line & Flag -->
+        <div class="target-marker-flag font-mono" id="target-marker-flag" style="left: 50%;">
+          Target: <span id="flag-target-val">150</span>
+        </div>
+        <div class="target-marker-line" id="target-marker-line" style="left: 50%;"></div>
+      </div>
+
+      <!-- Scale Ticks -->
+      <div class="scale-ticks font-mono">
+        <span>0</span>
+        <span>50</span>
+        <span>100</span>
+        <span>150</span>
+        <span>200</span>
+        <span>250</span>
+        <span>300 (Max Marks)</span>
+      </div>
+
+      <!-- Bar Legend & Milestone Insights -->
+      <div class="bar-legend">
+        <div class="legend-item">
+          <div class="legend-dot" style="background: #10b981;"></div>
+          <span><strong>Guaranteed Floor (Min):</strong> <span class="font-mono text-white" id="legend-min">0</span> marks</span>
+        </div>
+        <div class="legend-item">
+          <div class="legend-dot" style="background: #06b6d4;"></div>
+          <span><strong>Potential Ceiling (Max):</strong> <span class="font-mono text-white" id="legend-max">0</span> marks</span>
+        </div>
+        <div class="legend-item">
+          <div class="legend-dot" style="background: #ec4899;"></div>
+          <span><strong>Your Target:</strong> <span class="font-mono text-white" id="legend-target">150</span> marks</span>
+        </div>
+        <div style="margin-left: auto; font-size: 0.78rem; color: #38bdf8;" id="percentile-estimate-pill">
+          Est. Percentile: ~97.2%ile (at Target)
+        </div>
+      </div>
+    </section>
+
+    <!-- KEY METRIC CARDS -->
+    <section class="metrics-grid">
+      <!-- Min Guaranteed Score -->
+      <div class="glass-panel metric-card min-card">
+        <div class="metric-header">
+          <div class="metric-title">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2.5">
+              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+            </svg>
+            Guaranteed Floor (Min)
+          </div>
+          <span class="badge-pill badge-emerald font-mono" id="min-pct-badge">0%</span>
+        </div>
+        <div class="metric-value font-mono" style="color: #34d399;" id="card-min-val">0</div>
+        <div class="metric-sub" id="card-min-gap-text">
+          <span>Gap to target: <strong>150 marks</strong></span>
+        </div>
+      </div>
+
+      <!-- Max Potential Score -->
+      <div class="glass-panel metric-card max-card">
+        <div class="metric-header">
+          <div class="metric-title">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#38bdf8" stroke-width="2.5">
+              <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
+            </svg>
+            Potential Ceiling (Max)
+          </div>
+          <span class="badge-pill badge-cyan font-mono" id="max-pct-badge">0%</span>
+        </div>
+        <div class="metric-value font-mono" style="color: #38bdf8;" id="card-max-val">0</div>
+        <div class="metric-sub" id="card-max-gap-text">
+          <span>Gap to target: <strong>150 marks</strong></span>
+        </div>
+      </div>
+
+      <!-- Marks Remaining to Target -->
+      <div class="glass-panel metric-card target-card">
+        <div class="metric-header">
+          <div class="metric-title">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#ec4899" stroke-width="2.5">
+              <circle cx="12" cy="12" r="10"></circle>
+              <polyline points="12 6 12 12 14 14"></polyline>
+            </svg>
+            Marks Needed to Target
+          </div>
+          <span class="badge-pill" style="background: rgba(236,72,153,0.15); color: #f472b6; border: 1px solid rgba(236,72,153,0.3);" id="target-gap-badge">
+            In Reach
+          </span>
+        </div>
+        <div class="metric-value font-mono" style="color: #f472b6;" id="card-target-gap-val">150</div>
+        <div class="metric-sub">
+          <span id="target-status-subtext">Min gap: 150m | Max gap: 150m</span>
+        </div>
+      </div>
+
+      <!-- Chapters Mastered -->
+      <div class="glass-panel metric-card mastered-card">
+        <div class="metric-header">
+          <div class="metric-title">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#f59e0b" stroke-width="2.5">
+              <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+              <polyline points="22 4 12 14.01 9 11.01"></polyline>
+            </svg>
+            Chapters Mastered
+          </div>
+          <span class="badge-pill badge-amber font-mono" id="mastered-pct-badge">0%</span>
+        </div>
+        <div class="metric-value font-mono" style="color: #fbbf24;" id="card-mastered-val">0 / 66</div>
+        <div class="metric-sub" id="subject-breakdown-subtext">
+          <span>P: 0 | C: 0 | M: 0</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- SMART TRIAGE / WHAT SHOULD I STUDY NEXT & CONTROLS TOOLBAR -->
+    <section class="glass-panel toolbar-container">
+      <div class="toolbar-row">
+        <!-- Filter Buttons (2x2 on mobile, single row on desktop) -->
+        <div class="filter-pills-group" id="filter-buttons">
+          <button class="filter-pill active" data-filter="all" onclick="setFilter('all')">
+            <span>All Chapters</span>
+            <span class="badge-pill" style="background: rgba(255,255,255,0.1); padding: 0.1rem 0.4rem;" id="badge-count-all">0</span>
+          </button>
+          <button class="filter-pill" data-filter="high-yield" onclick="setFilter('high-yield')">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
+            <span>High-Yield (8+m)</span>
+            <span class="badge-pill" style="background: rgba(245,158,11,0.2); color: #fbbf24; padding: 0.1rem 0.4rem;" id="badge-count-high-yield">0</span>
+          </button>
+          <button class="filter-pill" data-filter="in-progress" onclick="setFilter('in-progress')">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+            <span>In Progress (1-2)</span>
+            <span class="badge-pill" style="background: rgba(56,189,248,0.2); color: #38bdf8; padding: 0.1rem 0.4rem;" id="badge-count-in-progress">0</span>
+          </button>
+          <button class="filter-pill" data-filter="mastered" onclick="setFilter('mastered')">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+            <span>Mastered</span>
+            <span class="badge-pill" style="background: rgba(16,185,129,0.2); color: #34d399; padding: 0.1rem 0.4rem;" id="badge-count-mastered">0</span>
+          </button>
+        </div>
+
+        <!-- View Mode Switcher (Visible on desktop >= 768px) -->
+        <div class="view-mode-group">
+          <button class="view-btn active" id="view-mode-grid" onclick="setViewMode('grid')" title="3-Column Side-by-Side PCM Grid">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="18"></rect><rect x="14" y="3" width="7" height="18"></rect></svg>
+            <span>3-Col Grid</span>
+          </button>
+          <button class="view-btn" id="view-mode-tabs" onclick="setViewMode('tabs')" title="Tabbed Subject View">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path></svg>
+            <span>Tabbed View</span>
+          </button>
+        </div>
+      </div>
+
+      <div class="toolbar-row">
+        <!-- Search and Sort -->
+        <div class="search-sort-group">
+          <!-- Search input -->
+          <div class="search-input-wrap">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#64748b" stroke-width="2" style="position: absolute; left: 12px; top: 50%; transform: translateY(-50%);">
+              <circle cx="11" cy="11" r="8"></circle>
+              <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+            </svg>
+            <input type="text" id="search-input" placeholder="Search chapters across PCM..." class="input-field" 
+                   style="padding-left: 2.2rem; width: 100%;" oninput="handleSearch(this.value)">
+          </div>
+
+          <!-- Sort dropdown -->
+          <div class="sort-select-wrap">
+            <span style="font-size: 0.78rem; color: var(--text-muted); font-weight: 600; white-space: nowrap;">Sort:</span>
+            <select id="sort-select" class="input-field" onchange="setSort(this.value)">
+              <option value="default">Default Syllabus Order</option>
+              <option value="roi">Highest Max Marks (Best ROI)</option>
+              <option value="proximity">Closest to Mastery (2 boxes done)</option>
+              <option value="name">Alphabetical (A - Z)</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Add Custom Chapter Button -->
+        <div class="add-chapter-btn-wrap">
+          <button class="btn btn-primary add-chapter-btn" onclick="openAddChapterModal()">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+              <line x1="12" y1="5" x2="12" y2="19"></line>
+              <line x1="5" y1="12" x2="19" y2="12"></line>
+            </svg>
+            <span>Add Custom Chapter</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Subject Tabs (Default on mobile < 768px, and tabbed view on desktop) -->
+      <div id="subject-tab-bar" class="subject-tab-wrapper">
+        <div class="subject-tab-buttons">
+          <button class="subject-tab-btn tab-btn-physics active" id="tab-physics" onclick="setSubjectTab('physics')" title="Show Physics Chapters">
+            <span class="tab-indicator" style="background: var(--physics-color);"></span>
+            <span class="tab-label">Physics</span>
+            <span class="tab-count-badge font-mono" id="tab-count-physics">0/22</span>
+          </button>
+          <button class="subject-tab-btn tab-btn-chemistry" id="tab-chemistry" onclick="setSubjectTab('chemistry')" title="Show Chemistry Chapters">
+            <span class="tab-indicator" style="background: var(--chem-color);"></span>
+            <span class="tab-label">Chemistry</span>
+            <span class="tab-count-badge font-mono" id="tab-count-chemistry">0/22</span>
+          </button>
+          <button class="subject-tab-btn tab-btn-mathematics" id="tab-mathematics" onclick="setSubjectTab('mathematics')" title="Show Mathematics Chapters">
+            <span class="tab-indicator" style="background: var(--math-color);"></span>
+            <span class="tab-label">Mathematics</span>
+            <span class="tab-count-badge font-mono" id="tab-count-mathematics">0/22</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Smart Recommendations Engine Banner -->
+      <div class="smart-recommendation-banner" id="smart-rec-banner">
+        <div style="display: flex; align-items: center; gap: 0.6rem;">
+          <div style="background: rgba(245, 158, 11, 0.2); padding: 0.4rem; border-radius: 0.5rem; color: #fbbf24;">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+              <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+            </svg>
+          </div>
+          <div>
+            <div style="font-size: 0.8rem; font-weight: 700; color: #fbbf24;">Smart Study Recommendation (Highest ROI)</div>
+            <div style="font-size: 0.72rem; color: var(--text-muted);" id="smart-rec-sub">Focus on high-yield chapters closest to completion:</div>
+          </div>
+        </div>
+        <div class="rec-tag-group" id="smart-rec-chips">
+          <!-- Populated dynamically with top 3 priority chapters -->
+        </div>
+      </div>
+    </section>
+
+    <!-- PCM CHAPTER TRACKER (GRID / COLUMNS) -->
+    <main class="pcm-grid cols-3" id="pcm-container">
+      
+      <!-- PHYSICS COLUMN -->
+      <div class="subject-column" id="col-physics">
+        <div class="subject-col-header">
+          <div class="subject-title physics-accent">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+              <circle cx="12" cy="12" r="10"></circle>
+              <line x1="2" y1="12" x2="22" y2="12"></line>
+              <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
+            </svg>
+            <span>Physics</span>
+          </div>
+          <div style="display: flex; align-items: center; gap: 0.5rem;">
+            <span class="subject-stats-pill font-mono" id="stats-physics">0/22 (0m)</span>
+            <button class="btn-icon" onclick="batchToggleSubject('physics')" title="Toggle all check states in Physics">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path><rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect></svg>
+            </button>
+          </div>
+        </div>
+        <div class="chapter-list" id="list-physics">
+          <!-- Rendered by JS -->
+        </div>
+      </div>
+
+      <!-- CHEMISTRY COLUMN -->
+      <div class="subject-column" id="col-chemistry">
+        <div class="subject-col-header">
+          <div class="subject-title chem-accent">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+              <path d="M10 2v7.31L4.5 19.5A2 2 0 0 0 6.23 22h11.54a2 2 0 0 0 1.73-2.5L14 9.31V2"></path>
+              <line x1="8.5" y1="2" x2="15.5" y2="2"></line>
+              <line x1="6.5" y1="15" x2="17.5" y2="15"></line>
+            </svg>
+            <span>Chemistry</span>
+          </div>
+          <div style="display: flex; align-items: center; gap: 0.5rem;">
+            <span class="subject-stats-pill font-mono" id="stats-chemistry">0/21 (0m)</span>
+            <button class="btn-icon" onclick="batchToggleSubject('chemistry')" title="Toggle all check states in Chemistry">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path><rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect></svg>
+            </button>
+          </div>
+        </div>
+        <div class="chapter-list" id="list-chemistry">
+          <!-- Rendered by JS -->
+        </div>
+      </div>
+
+      <!-- MATHEMATICS COLUMN -->
+      <div class="subject-column" id="col-mathematics">
+        <div class="subject-col-header">
+          <div class="subject-title math-accent">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+              <line x1="18" y1="6" x2="6" y2="18"></line>
+              <line x1="6" y1="6" x2="18" y2="18"></line>
+              <line x1="4" y1="12" x2="20" y2="12"></line>
+            </svg>
+            <span>Mathematics</span>
+          </div>
+          <div style="display: flex; align-items: center; gap: 0.5rem;">
+            <span class="subject-stats-pill font-mono" id="stats-mathematics">0/22 (0m)</span>
+            <button class="btn-icon" onclick="batchToggleSubject('mathematics')" title="Toggle all check states in Mathematics">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path><rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect></svg>
+            </button>
+          </div>
+        </div>
+        <div class="chapter-list" id="list-mathematics">
+          <!-- Rendered by JS -->
+        </div>
+      </div>
+
+    </main>
+
+  </div> <!-- End App Container -->
+
+  <!-- MODALS -->
+
+  <!-- 1. Edit Exam Date Modal -->
+  <div class="modal-backdrop" id="modal-date">
+    <div class="modal-box">
+      <h3 style="font-size: 1.15rem; font-weight: 800; margin-bottom: 0.5rem; display: flex; align-items: center; gap: 0.5rem;">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#38bdf8" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+        Target Exam Date & Time
+      </h3>
+      <p style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 1.25rem;">
+        Select your targeted JEE Mains attempt date. The real-time countdown will synchronize automatically.
+      </p>
+
+      <div style="margin-bottom: 1.25rem;">
+        <label style="display: block; font-size: 0.78rem; font-weight: 700; color: var(--text-muted); margin-bottom: 0.4rem;">Select Date and Time</label>
+        <input type="datetime-local" id="modal-date-picker" class="input-field" style="width: 100%; font-size: 0.95rem;">
+      </div>
+
+      <div style="margin-bottom: 1.5rem;">
+        <div style="font-size: 0.75rem; font-weight: 700; color: var(--text-muted); margin-bottom: 0.4rem;">Quick Presets</div>
+        <div style="display: flex; flex-wrap: wrap; gap: 0.5rem;">
+          <button class="btn btn-secondary" onclick="setDatePreset('2027-01-22T09:00:00')">JEE Main Jan 2027 (Default)</button>
+          <button class="btn btn-secondary" onclick="setDatePreset('2027-04-06T09:00:00')">JEE Main Apr 2027</button>
+          <button class="btn btn-secondary" onclick="setDatePreset('2026-01-24T09:00:00')">JEE Main Jan 2026</button>
+        </div>
+      </div>
+
+      <div style="display: flex; justify-content: flex-end; gap: 0.75rem;">
+        <button class="btn btn-secondary" onclick="closeModal('modal-date')">Cancel</button>
+        <button class="btn btn-primary" onclick="saveExamDate()">Save Target Date</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 2. Add / Edit Chapter Modal -->
+  <div class="modal-backdrop" id="modal-chapter">
+    <div class="modal-box">
+      <h3 style="font-size: 1.15rem; font-weight: 800; margin-bottom: 0.5rem; display: flex; align-items: center; gap: 0.5rem;">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2"><path d="M12 5v14M5 12h14"></path></svg>
+        <span id="modal-chapter-heading">Add Custom Chapter</span>
+      </h3>
+      <p style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 1.25rem;">
+        Add a chapter with custom Min and Max historical weightage marks.
+      </p>
+
+      <input type="hidden" id="edit-chapter-id">
+
+      <div style="margin-bottom: 1rem;">
+        <label style="display: block; font-size: 0.78rem; font-weight: 700; color: var(--text-muted); margin-bottom: 0.35rem;">Subject</label>
+        <select id="modal-ch-subject" class="input-field" style="width: 100%;">
+          <option value="physics">Physics</option>
+          <option value="chemistry">Chemistry</option>
+          <option value="mathematics">Mathematics</option>
+        </select>
+      </div>
+
+      <div style="margin-bottom: 1rem;">
+        <label style="display: block; font-size: 0.78rem; font-weight: 700; color: var(--text-muted); margin-bottom: 0.35rem;">Chapter Name</label>
+        <input type="text" id="modal-ch-name" placeholder="e.g., Qualitative Analysis or Special Series" class="input-field" style="width: 100%;">
+      </div>
+
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1.5rem;">
+        <div>
+          <label style="display: block; font-size: 0.78rem; font-weight: 700; color: var(--text-muted); margin-bottom: 0.35rem;">Min Marks (Floor)</label>
+          <input type="number" id="modal-ch-min" min="0" max="40" step="4" value="4" class="input-field font-mono" style="width: 100%;">
+          <span style="font-size: 0.68rem; color: var(--text-faint);">Usually 4 marks (1 Q)</span>
+        </div>
+        <div>
+          <label style="display: block; font-size: 0.78rem; font-weight: 700; color: var(--text-muted); margin-bottom: 0.35rem;">Max Marks (Ceiling)</label>
+          <input type="number" id="modal-ch-max" min="0" max="40" step="4" value="8" class="input-field font-mono" style="width: 100%;">
+          <span style="font-size: 0.68rem; color: var(--text-faint);">8 or 12 for high yield</span>
+        </div>
+      </div>
+
+      <div style="display: flex; justify-content: flex-end; gap: 0.75rem;">
+        <button class="btn btn-secondary" onclick="closeModal('modal-chapter')">Cancel</button>
+        <button class="btn btn-primary" onclick="saveChapter()">Save Chapter</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 3. Inline Marks Editor Popover Modal -->
+  <div class="modal-backdrop" id="modal-inline-marks">
+    <div class="modal-box" style="max-width: 400px;">
+      <h3 style="font-size: 1.1rem; font-weight: 800; margin-bottom: 0.4rem;">Edit Chapter Marks</h3>
+      <p style="font-size: 0.78rem; color: var(--text-muted); margin-bottom: 1rem;" id="inline-marks-ch-title">
+        Chapter Name
+      </p>
+      <input type="hidden" id="inline-marks-id">
+
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.85rem; margin-bottom: 1.25rem;">
+        <div>
+          <label style="display: block; font-size: 0.75rem; font-weight: 700; color: var(--text-muted); margin-bottom: 0.3rem;">Min Marks</label>
+          <input type="number" id="inline-min-input" min="0" max="40" class="input-field font-mono" style="width: 100%;">
+        </div>
+        <div>
+          <label style="display: block; font-size: 0.75rem; font-weight: 700; color: var(--text-muted); margin-bottom: 0.3rem;">Max Marks</label>
+          <input type="number" id="inline-max-input" min="0" max="40" class="input-field font-mono" style="width: 100%;">
+        </div>
+      </div>
+
+      <div style="display: flex; justify-content: flex-end; gap: 0.5rem;">
+        <button class="btn btn-secondary" onclick="closeModal('modal-inline-marks')">Cancel</button>
+        <button class="btn btn-primary" onclick="saveInlineMarks()">Update</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 4. Reset Confirmation Modal -->
+  <div class="modal-backdrop" id="modal-reset">
+    <div class="modal-box" style="max-width: 460px;">
+      <h3 style="font-size: 1.15rem; font-weight: 800; margin-bottom: 0.5rem; color: #fb7185; display: flex; align-items: center; gap: 0.5rem;">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
+        Reset All Progress?
+      </h3>
+      <p style="font-size: 0.82rem; color: var(--text-muted); margin-bottom: 1.25rem;">
+        This will revert all 66 chapters back to the default uncompleted syllabus state and reset custom chapters. We recommend taking an Export JSON backup first!
+      </p>
+
+      <div style="display: flex; justify-content: flex-end; gap: 0.75rem;">
+        <button class="btn btn-secondary" onclick="closeModal('modal-reset')">Keep My Data</button>
+        <button class="btn btn-danger" onclick="confirmResetDefaults()">Yes, Reset Syllabus</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notification Container -->
+  <div class="toast-container" id="toast-container"></div>
+
+  <!-- APPLICATION LOGIC SCRIPT -->
+  <script>
+    /* =====================================================================
+       JEE MAINS COUNTDOWN & MARKS PREDICTOR - PURE JAVASCRIPT ENGINE
+       ===================================================================== */
+
+    const STORAGE_KEY = 'jee_mains_tracker_state_v2';
+
+    // Standard Realistic JEE Main Syllabus with Historical Weightages
+    const DEFAULT_SYLLABUS = [
+      // --- PHYSICS (22 Chapters) ---
+      { id: 'p1', subject: 'physics', name: 'Modern Physics: Dual Nature of Matter & Radiation', minMarks: 4, maxMarks: 8, completed: false, revision: false, practice: false },
+      { id: 'p2', subject: 'physics', name: 'Modern Physics: Atoms & Nuclei', minMarks: 4, maxMarks: 8, completed: false, revision: false, practice: false },
+      { id: 'p3', subject: 'physics', name: 'Current Electricity & Circuits', minMarks: 4, maxMarks: 8, completed: false, revision: false, practice: false },
+      { id: 'p4', subject: 'physics', name: 'Electrostatics & Electric Potential', minMarks: 4, maxMarks: 8, completed: false, revision: false, practice: false },
+      { id: 'p5', subject: 'physics', name: 'Capacitance & Dielectrics', minMarks: 4, maxMarks: 4, completed: false, revision: false, practice: false },
+      { id: 'p6', subject: 'physics', name: 'Magnetic Effects of Current & Magnetism', minMarks: 4, maxMarks: 8, completed: false, revision: false, practice: false },
+      { id: 'p7', subject: 'physics', name: 'Electromagnetic Induction (EMI) & AC', minMarks: 4, maxMarks: 8, completed: false, revision: false, practice: false },
+      { id: 'p8', subject: 'physics', name: 'Ray Optics & Optical Instruments', minMarks: 4, maxMarks: 8, completed: false, revision: false, practice: false },
+      { id: 'p9', subject: 'physics', name: 'Wave Optics & Interference', minMarks: 4, maxMarks: 4, completed: false, revision: false, practice: false },
+      { id: 'p10', subject: 'physics', name: 'Thermodynamics & Kinetic Theory (KTG)', minMarks: 8, maxMarks: 12, completed: false, revision: false, practice: false },
+      { id: 'p11', subject: 'physics', name: 'Rotational Motion & Moment of Inertia', minMarks: 4, maxMarks: 8, completed: false, revision: false, practice: false },
+      { id: 'p12', subject: 'physics', name: 'Work, Energy and Power', minMarks: 4, maxMarks: 8, completed: false, revision: false, practice: false },
+      { id: 'p13', subject: 'physics', name: 'Laws of Motion & Friction', minMarks: 4, maxMarks: 4, completed: false, revision: false, practice: false },
+      { id: 'p14', subject: 'physics', name: 'Kinematics (1D & 2D Motion)', minMarks: 4, maxMarks: 4, completed: false, revision: false, practice: false },
+      { id: 'p15', subject: 'physics', name: 'Gravitation & Planetary Motion', minMarks: 4, maxMarks: 4, completed: false, revision: false, practice: false },
+      { id: 'p16', subject: 'physics', name: 'Oscillations (Simple Harmonic Motion)', minMarks: 4, maxMarks: 4, completed: false, revision: false, practice: false },
+      { id: 'p17', subject: 'physics', name: 'Mechanical Waves & Sound Waves', minMarks: 4, maxMarks: 4, completed: false, revision: false, practice: false },
+      { id: 'p18', subject: 'physics', name: 'Fluid Mechanics & Surface Tension', minMarks: 4, maxMarks: 8, completed: false, revision: false, practice: false },
+      { id: 'p19', subject: 'physics', name: 'Mechanical Properties of Solids (Elasticity)', minMarks: 4, maxMarks: 4, completed: false, revision: false, practice: false },
+      { id: 'p20', subject: 'physics', name: 'Units, Dimensions & Error Analysis', minMarks: 4, maxMarks: 4, completed: false, revision: false, practice: false },
+      { id: 'p21', subject: 'physics', name: 'Semiconductor Electronics & Logic Gates', minMarks: 4, maxMarks: 8, completed: false, revision: false, practice: false },
+      { id: 'p22', subject: 'physics', name: 'Electromagnetic Waves (EM Waves)', minMarks: 4, maxMarks: 4, completed: false, revision: false, practice: false },
+
+      // --- CHEMISTRY (22 Chapters) ---
+      { id: 'c1', subject: 'chemistry', name: 'Chemical Kinetics & Rate Laws', minMarks: 4, maxMarks: 8, completed: false, revision: false, practice: false },
+      { id: 'c2', subject: 'chemistry', name: 'Chemical & Ionic Equilibrium', minMarks: 4, maxMarks: 8, completed: false, revision: false, practice: false },
+      { id: 'c3', subject: 'chemistry', name: 'Chemical Thermodynamics & Energetics', minMarks: 4, maxMarks: 8, completed: false, revision: false, practice: false },
+      { id: 'c4', subject: 'chemistry', name: 'Solutions & Colligative Properties', minMarks: 4, maxMarks: 8, completed: false, revision: false, practice: false },
+      { id: 'c5', subject: 'chemistry', name: 'Electrochemistry & Galvanic Cells', minMarks: 4, maxMarks: 8, completed: false, revision: false, practice: false },
+      { id: 'c6', subject: 'chemistry', name: 'Atomic Structure & Quantum Numbers', minMarks: 4, maxMarks: 4, completed: false, revision: false, practice: false },
+      { id: 'c7', subject: 'chemistry', name: 'Mole Concept & Stoichiometry', minMarks: 4, maxMarks: 4, completed: false, revision: false, practice: false },
+      { id: 'c8', subject: 'chemistry', name: 'Redox Reactions', minMarks: 4, maxMarks: 4, completed: false, revision: false, practice: false },
+      { id: 'c9', subject: 'chemistry', name: 'Coordination Compounds & Werner Theory', minMarks: 4, maxMarks: 8, completed: false, revision: false, practice: false },
+      { id: 'c10', subject: 'chemistry', name: 'Chemical Bonding & Molecular Geometry', minMarks: 8, maxMarks: 12, completed: false, revision: false, practice: false },
+      { id: 'c11', subject: 'chemistry', name: 'd- & f-Block Transition Elements', minMarks: 4, maxMarks: 8, completed: false, revision: false, practice: false },
+      { id: 'c12', subject: 'chemistry', name: 'p-Block Elements (Groups 13 to 18)', minMarks: 4, maxMarks: 8, completed: false, revision: false, practice: false },
+      { id: 'c13', subject: 'chemistry', name: 'Periodic Classification & Periodicity', minMarks: 4, maxMarks: 4, completed: false, revision: false, practice: false },
+      { id: 'c14', subject: 'chemistry', name: 'General Organic Chemistry (GOC & Mechanisms)', minMarks: 8, maxMarks: 12, completed: false, revision: false, practice: false },
+      { id: 'c15', subject: 'chemistry', name: 'Aldehydes, Ketones & Carboxylic Acids', minMarks: 4, maxMarks: 8, completed: false, revision: false, practice: false },
+      { id: 'c16', subject: 'chemistry', name: 'Hydrocarbons (Alkanes, Alkenes, Alkynes & Arenes)', minMarks: 4, maxMarks: 8, completed: false, revision: false, practice: false },
+      { id: 'c17', subject: 'chemistry', name: 'Alcohols, Phenols & Ethers', minMarks: 4, maxMarks: 8, completed: false, revision: false, practice: false },
+      { id: 'c18', subject: 'chemistry', name: 'Amines & Diazonium Salts', minMarks: 4, maxMarks: 4, completed: false, revision: false, practice: false },
+      { id: 'c19', subject: 'chemistry', name: 'Haloalkanes and Haloarenes (SN1/SN2)', minMarks: 4, maxMarks: 4, completed: false, revision: false, practice: false },
+      { id: 'c20', subject: 'chemistry', name: 'Biomolecules (Carbs, Proteins, Nucleic Acids)', minMarks: 4, maxMarks: 4, completed: false, revision: false, practice: false },
+      { id: 'c21', subject: 'chemistry', name: 'Purification & Principles of Practical Chemistry', minMarks: 4, maxMarks: 4, completed: false, revision: false, practice: false },
+      { id: 'c22', subject: 'chemistry', name: 'Salt Analysis & Inorganic Qualitative Tests', minMarks: 4, maxMarks: 4, completed: false, revision: false, practice: false },
+
+      // --- MATHEMATICS (22 Chapters) ---
+      { id: 'm1', subject: 'mathematics', name: 'Vector Algebra', minMarks: 4, maxMarks: 8, completed: false, revision: false, practice: false },
+      { id: 'm2', subject: 'mathematics', name: 'Three Dimensional (3D) Geometry', minMarks: 4, maxMarks: 8, completed: false, revision: false, practice: false },
+      { id: 'm3', subject: 'mathematics', name: 'Matrices and Determinants', minMarks: 8, maxMarks: 12, completed: false, revision: false, practice: false },
+      { id: 'm4', subject: 'mathematics', name: 'Definite Integrals & Properties', minMarks: 4, maxMarks: 8, completed: false, revision: false, practice: false },
+      { id: 'm5', subject: 'mathematics', name: 'Area Under Curves (Application of Integrals)', minMarks: 4, maxMarks: 4, completed: false, revision: false, practice: false },
+      { id: 'm6', subject: 'mathematics', name: 'Differential Equations', minMarks: 4, maxMarks: 8, completed: false, revision: false, practice: false },
+      { id: 'm7', subject: 'mathematics', name: 'Application of Derivatives (AOD & Maxima/Minima)', minMarks: 4, maxMarks: 8, completed: false, revision: false, practice: false },
+      { id: 'm8', subject: 'mathematics', name: 'Limits, Continuity & Differentiability (LCD)', minMarks: 4, maxMarks: 8, completed: false, revision: false, practice: false },
+      { id: 'm9', subject: 'mathematics', name: 'Indefinite Integration', minMarks: 4, maxMarks: 4, completed: false, revision: false, practice: false },
+      { id: 'm10', subject: 'mathematics', name: 'Sequences and Series (AP, GP, AGP)', minMarks: 4, maxMarks: 8, completed: false, revision: false, practice: false },
+      { id: 'm11', subject: 'mathematics', name: 'Binomial Theorem & Expansions', minMarks: 4, maxMarks: 8, completed: false, revision: false, practice: false },
+      { id: 'm12', subject: 'mathematics', name: 'Permutations & Combinations (P&C)', minMarks: 4, maxMarks: 4, completed: false, revision: false, practice: false },
+      { id: 'm13', subject: 'mathematics', name: 'Probability & Bayes Theorem', minMarks: 4, maxMarks: 8, completed: false, revision: false, practice: false },
+      { id: 'm14', subject: 'mathematics', name: 'Complex Numbers & Quadratic Equations', minMarks: 4, maxMarks: 8, completed: false, revision: false, practice: false },
+      { id: 'm15', subject: 'mathematics', name: 'Straight Lines & Pair of Lines', minMarks: 4, maxMarks: 4, completed: false, revision: false, practice: false },
+      { id: 'm16', subject: 'mathematics', name: 'Circles & System of Circles', minMarks: 4, maxMarks: 8, completed: false, revision: false, practice: false },
+      { id: 'm17', subject: 'mathematics', name: 'Conic Sections: Parabola', minMarks: 4, maxMarks: 4, completed: false, revision: false, practice: false },
+      { id: 'm18', subject: 'mathematics', name: 'Conic Sections: Ellipse & Hyperbola', minMarks: 4, maxMarks: 8, completed: false, revision: false, practice: false },
+      { id: 'm19', subject: 'mathematics', name: 'Functions, Relations & Domain/Range', minMarks: 4, maxMarks: 8, completed: false, revision: false, practice: false },
+      { id: 'm20', subject: 'mathematics', name: 'Inverse Trigonometric Functions (ITF)', minMarks: 4, maxMarks: 4, completed: false, revision: false, practice: false },
+      { id: 'm21', subject: 'mathematics', name: 'Trigonometric Ratios & Equations', minMarks: 4, maxMarks: 4, completed: false, revision: false, practice: false },
+      { id: 'm22', subject: 'mathematics', name: 'Statistics (Variance & Standard Deviation)', minMarks: 4, maxMarks: 4, completed: false, revision: false, practice: false }
+    ];
+
+    // State container
+    let state = {
+      targetExamDate: '2027-01-22T09:00:00',
+      targetScore: 150,
+      chapters: JSON.parse(JSON.stringify(DEFAULT_SYLLABUS)),
+      activeFilter: 'all', // 'all' | 'high-yield' | 'in-progress' | 'mastered'
+      activeSort: 'default', // 'default' | 'roi' | 'proximity' | 'name'
+      searchQuery: '',
+      viewMode: 'grid', // 'grid' | 'tabs'
+      activeSubjectTab: 'physics'
+    };
+
+    // Load from localStorage
+    function loadState() {
+      try {
+        const saved = localStorage.getItem(STORAGE_KEY);
+        if (saved) {
+          const parsed = JSON.parse(saved);
+          if (parsed.targetExamDate) state.targetExamDate = parsed.targetExamDate;
+          if (typeof parsed.targetScore === 'number') state.targetScore = parsed.targetScore;
+          if (Array.isArray(parsed.chapters) && parsed.chapters.length > 0) {
+            state.chapters = parsed.chapters;
+          }
+          if (parsed.viewMode) state.viewMode = parsed.viewMode;
+        }
+      } catch (err) {
+        console.warn('Failed to load state from localStorage:', err);
+      }
+    }
+
+    // Persist to localStorage
+    function saveState() {
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify({
+          targetExamDate: state.targetExamDate,
+          targetScore: state.targetScore,
+          chapters: state.chapters,
+          viewMode: state.viewMode
+        }));
+      } catch (err) {
+        console.error('Error saving state to localStorage:', err);
+      }
+    }
+
+    /* =====================================================================
+       COUNTDOWN TIMER ENGINE
+       ===================================================================== */
+    let countdownInterval = null;
+
+    function formatExamDateDisplay(dateStr) {
+      try {
+        const d = new Date(dateStr);
+        return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+      } catch (e) {
+        return dateStr;
+      }
+    }
+
+    function startCountdown() {
+      if (countdownInterval) clearInterval(countdownInterval);
+
+      function tick() {
+        const now = new Date().getTime();
+        const target = new Date(state.targetExamDate).getTime();
+        const diff = target - now;
+
+        const daysEl = document.getElementById('cd-days');
+        const hoursEl = document.getElementById('cd-hours');
+        const minsEl = document.getElementById('cd-minutes');
+        const secsEl = document.getElementById('cd-seconds');
+
+        if (diff <= 0) {
+          daysEl.textContent = '00';
+          hoursEl.textContent = '00';
+          minsEl.textContent = '00';
+          secsEl.textContent = '00';
+          return;
+        }
+
+        const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+        const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+        const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+
+        daysEl.textContent = String(days).padStart(days > 99 ? 3 : 2, '0');
+        hoursEl.textContent = String(hours).padStart(2, '0');
+        minsEl.textContent = String(minutes).padStart(2, '0');
+        secsEl.textContent = String(seconds).padStart(2, '0');
+      }
+
+      tick();
+      countdownInterval = setInterval(tick, 1000);
+      document.getElementById('header-date-text').textContent = formatExamDateDisplay(state.targetExamDate);
+    }
+
+    /* =====================================================================
+       SCORING & PREDICTION CALCULATIONS
+       ===================================================================== */
+    function getChapterCheckCount(ch) {
+      return (ch.completed ? 1 : 0) + (ch.revision ? 1 : 0) + (ch.practice ? 1 : 0);
+    }
+
+    function isChapterMastered(ch) {
+      return ch.completed && ch.revision && ch.practice;
+    }
+
+    function calculateStats() {
+      let totalMin = 0;
+      let totalMax = 0;
+      let masteredCount = 0;
+      let inProgressCount = 0;
+      let unstartedCount = 0;
+      let highYieldUnfinished = 0;
+
+      const subjectStats = {
+        physics: { total: 0, mastered: 0, min: 0, max: 0 },
+        chemistry: { total: 0, mastered: 0, min: 0, max: 0 },
+        mathematics: { total: 0, mastered: 0, min: 0, max: 0 }
+      };
+
+      state.chapters.forEach(ch => {
+        const sub = ch.subject;
+        if (subjectStats[sub]) {
+          subjectStats[sub].total++;
+        }
+
+        const checks = getChapterCheckCount(ch);
+        const mastered = checks === 3;
+        const minM = Number(ch.minMarks) || 0;
+        const maxM = Number(ch.maxMarks) || 0;
+
+        if (mastered) {
+          totalMin += minM;
+          totalMax += maxM;
+          masteredCount++;
+          if (subjectStats[sub]) {
+            subjectStats[sub].mastered++;
+            subjectStats[sub].min += minM;
+            subjectStats[sub].max += maxM;
+          }
+        } else {
+          if (checks > 0) inProgressCount++;
+          else unstartedCount++;
+
+          if (maxM >= 8) highYieldUnfinished++;
+        }
+      });
+
+      return {
+        totalMin,
+        totalMax,
+        masteredCount,
+        inProgressCount,
+        unstartedCount,
+        highYieldUnfinished,
+        totalChapters: state.chapters.length,
+        subjectStats
+      };
+    }
+
+    function getPercentileEstimate(marks) {
+      if (marks >= 250) return '~99.9%ile (Top NIT/IIIT CSE)';
+      if (marks >= 220) return '~99.6%ile (Top NIT Core)';
+      if (marks >= 200) return '~99.2%ile (NIT Guaranteed)';
+      if (marks >= 180) return '~98.6%ile (Strong NIT Option)';
+      if (marks >= 160) return '~97.8%ile (JEE Adv Qualified)';
+      if (marks >= 140) return '~96.3%ile (Mid NIT/IIIT)';
+      if (marks >= 120) return '~94.5%ile (Qualifying)';
+      if (marks >= 100) return '~91.0%ile';
+      return '< 90.0%ile';
+    }
+
+    /* =====================================================================
+       DOM UPDATE ENGINE
+       ===================================================================== */
+    function renderDashboard() {
+      const stats = calculateStats();
+      const target = Number(state.targetScore) || 150;
+
+      // 1. Current Projected Score Range: [Min] – [Max] / [Target]
+      const scoreRangeEl = document.getElementById('score-range-display');
+      scoreRangeEl.textContent = `${stats.totalMin} – ${stats.totalMax}`;
+      document.getElementById('target-score-denom').textContent = target;
+
+      // Target Achievement Badge
+      const targetBadge = document.getElementById('target-achievement-badge');
+      if (stats.totalMin >= target) {
+        targetBadge.className = 'badge-pill badge-emerald';
+        targetBadge.textContent = '🎯 Target Guaranteed!';
+      } else if (stats.totalMax >= target) {
+        targetBadge.className = 'badge-pill badge-amber';
+        targetBadge.textContent = '🚀 Target Achievable (Ceiling)';
+      } else {
+        targetBadge.className = 'badge-pill badge-cyan';
+        targetBadge.textContent = `${target - stats.totalMax}m Gap to Ceiling`;
+      }
+
+      // 2. Dual Progress Bar (scale: 0 to 300)
+      const maxJeeScale = 300;
+      const minPercent = Math.min(100, Math.max(0, (stats.totalMin / maxJeeScale) * 100));
+      const maxPercent = Math.min(100, Math.max(0, (stats.totalMax / maxJeeScale) * 100));
+      const targetPercent = Math.min(100, Math.max(0, (target / maxJeeScale) * 100));
+
+      const barMin = document.getElementById('bar-min');
+      const barMax = document.getElementById('bar-max');
+      const targetLine = document.getElementById('target-marker-line');
+      const targetFlag = document.getElementById('target-marker-flag');
+      const flagTargetVal = document.getElementById('flag-target-val');
+
+      barMin.style.width = `${minPercent}%`;
+      barMax.style.width = `${maxPercent}%`;
+      targetLine.style.left = `${targetPercent}%`;
+      targetFlag.style.left = `clamp(32px, ${targetPercent}%, calc(100% - 32px))`;
+      flagTargetVal.textContent = target;
+
+      // Update Subject Tab Counter Badges
+      const pTabBadge = document.getElementById('tab-count-physics');
+      const cTabBadge = document.getElementById('tab-count-chemistry');
+      const mTabBadge = document.getElementById('tab-count-mathematics');
+      if (pTabBadge) pTabBadge.textContent = `${stats.subjectStats.physics.mastered}/${stats.subjectStats.physics.total}`;
+      if (cTabBadge) cTabBadge.textContent = `${stats.subjectStats.chemistry.mastered}/${stats.subjectStats.chemistry.total}`;
+      if (mTabBadge) mTabBadge.textContent = `${stats.subjectStats.mathematics.mastered}/${stats.subjectStats.mathematics.total}`;
+
+      // Legend Numbers
+      document.getElementById('legend-min').textContent = stats.totalMin;
+      document.getElementById('legend-max').textContent = stats.totalMax;
+      document.getElementById('legend-target').textContent = target;
+      document.getElementById('percentile-estimate-pill').textContent = 
+        `Est. Percentile at Target (${target}m): ${getPercentileEstimate(target)}`;
+
+      // 3. Metric Cards
+      document.getElementById('card-min-val').textContent = stats.totalMin;
+      document.getElementById('card-max-val').textContent = stats.totalMax;
+      document.getElementById('min-pct-badge').textContent = `${Math.round(minPercent)}% of 300`;
+      document.getElementById('max-pct-badge').textContent = `${Math.round(maxPercent)}% of 300`;
+
+      // Gaps
+      const minGap = Math.max(0, target - stats.totalMin);
+      const maxGap = Math.max(0, target - stats.totalMax);
+
+      document.getElementById('card-min-gap-text').innerHTML = 
+        minGap === 0 ? '<span style="color:#34d399;">✓ Target Fully Guaranteed</span>' 
+                     : `<span>Gap to target: <strong>${minGap} marks</strong></span>`;
+
+      document.getElementById('card-max-gap-text').innerHTML = 
+        maxGap === 0 ? '<span style="color:#38bdf8;">✓ Within Max Potential</span>' 
+                     : `<span>Gap to target: <strong>${maxGap} marks</strong></span>`;
+
+      // Remaining to target card
+      const targetGapCardVal = document.getElementById('card-target-gap-val');
+      const targetGapBadge = document.getElementById('target-gap-badge');
+      const targetStatusSubtext = document.getElementById('target-status-subtext');
+
+      if (minGap === 0) {
+        targetGapCardVal.textContent = '0';
+        targetGapBadge.textContent = 'Secured!';
+        targetGapBadge.style.color = '#34d399';
+        targetStatusSubtext.textContent = 'Guaranteed floor exceeds target';
+      } else {
+        targetGapCardVal.textContent = `${minGap}`;
+        targetGapBadge.textContent = maxGap === 0 ? 'Within Reach' : `${maxGap}m Deficit`;
+        targetGapBadge.style.color = maxGap === 0 ? '#38bdf8' : '#fb7185';
+        targetStatusSubtext.textContent = `Min gap: ${minGap}m | Max gap: ${maxGap}m`;
+      }
+
+      // Mastered chapters card
+      const masteredPct = Math.round((stats.masteredCount / stats.totalChapters) * 100) || 0;
+      document.getElementById('card-mastered-val').textContent = `${stats.masteredCount} / ${stats.totalChapters}`;
+      document.getElementById('mastered-pct-badge').textContent = `${masteredPct}%`;
+      document.getElementById('subject-breakdown-subtext').textContent = 
+        `P: ${stats.subjectStats.physics.mastered} | C: ${stats.subjectStats.chemistry.mastered} | M: ${stats.subjectStats.mathematics.mastered}`;
+
+      // 4. Update Filter Pill Badges
+      document.getElementById('badge-count-all').textContent = stats.totalChapters;
+      document.getElementById('badge-count-high-yield').textContent = stats.highYieldUnfinished;
+      document.getElementById('badge-count-in-progress').textContent = stats.inProgressCount;
+      document.getElementById('badge-count-mastered').textContent = stats.masteredCount;
+
+      // 5. Subject Column Header Stats
+      document.getElementById('stats-physics').textContent = 
+        `${stats.subjectStats.physics.mastered}/${stats.subjectStats.physics.total} (${stats.subjectStats.physics.min}–${stats.subjectStats.physics.max}m)`;
+      document.getElementById('stats-chemistry').textContent = 
+        `${stats.subjectStats.chemistry.mastered}/${stats.subjectStats.chemistry.total} (${stats.subjectStats.chemistry.min}–${stats.subjectStats.chemistry.max}m)`;
+      document.getElementById('stats-mathematics').textContent = 
+        `${stats.subjectStats.mathematics.mastered}/${stats.subjectStats.mathematics.total} (${stats.subjectStats.mathematics.min}–${stats.subjectStats.mathematics.max}m)`;
+
+      // 6. Update Smart Recommendations
+      renderSmartRecommendations();
+
+      // 7. Render Chapter Lists
+      renderChapters();
+    }
+
+    /* =====================================================================
+       CHAPTER LIST RENDERING & FILTERING
+       ===================================================================== */
+    function filterAndSortChapters(chapters, subject) {
+      let list = chapters.filter(ch => ch.subject === subject);
+
+      // Search Filter
+      if (state.searchQuery.trim()) {
+        const q = state.searchQuery.toLowerCase();
+        list = list.filter(ch => ch.name.toLowerCase().includes(q));
+      }
+
+      // Active Triage Filter
+      if (state.activeFilter === 'high-yield') {
+        list = list.filter(ch => (ch.maxMarks >= 8) && !isChapterMastered(ch));
+      } else if (state.activeFilter === 'in-progress') {
+        list = list.filter(ch => {
+          const c = getChapterCheckCount(ch);
+          return c > 0 && c < 3;
+        });
+      } else if (state.activeFilter === 'mastered') {
+        list = list.filter(ch => isChapterMastered(ch));
+      }
+
+      // Sorting
+      if (state.activeSort === 'roi') {
+        list.sort((a, b) => (b.maxMarks - a.maxMarks) || (b.minMarks - a.minMarks));
+      } else if (state.activeSort === 'proximity') {
+        list.sort((a, b) => getChapterCheckCount(b) - getChapterCheckCount(a));
+      } else if (state.activeSort === 'name') {
+        list.sort((a, b) => a.name.localeCompare(b.name));
+      }
+      // 'default' retains original array order
+
+      return list;
+    }
+
+    function renderChapters() {
+      const subjects = ['physics', 'chemistry', 'mathematics'];
+
+      subjects.forEach(sub => {
+        const listEl = document.getElementById(`list-${sub}`);
+        const filtered = filterAndSortChapters(state.chapters, sub);
+
+        if (filtered.length === 0) {
+          listEl.innerHTML = `
+            <div style="padding: 2.5rem 1rem; text-align: center; color: var(--text-faint); font-size: 0.85rem;">
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="margin: 0 auto 0.5rem; opacity: 0.5;">
+                <circle cx="11" cy="11" r="8"></circle>
+                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+              </svg>
+              No chapters match the current filter.
+            </div>`;
+          return;
+        }
+
+        listEl.innerHTML = filtered.map(ch => {
+          const checks = getChapterCheckCount(ch);
+          const isMastered = checks === 3;
+          const isInProgress = checks > 0 && checks < 3;
+
+          let statusClass = '';
+          if (isMastered) statusClass = 'status-mastered';
+          else if (isInProgress) statusClass = 'status-in-progress';
+
+          const isHighYield = ch.maxMarks >= 8;
+
+          return `
+            <div class="chapter-card ${statusClass}" id="ch-card-${ch.id}">
+              <div class="chapter-card-top">
+                <div class="chapter-name-wrap">
+                  <div class="chapter-title">${escapeHtml(ch.name)}</div>
+                  <div style="display: flex; align-items: center; gap: 0.5rem; margin-top: 0.35rem;">
+                    <!-- Inline Marks Badge & Editor Trigger -->
+                    <span class="chapter-marks-badge font-mono ${isHighYield ? 'high-yield' : ''}" 
+                          onclick="openInlineMarksModal('${ch.id}')" 
+                          title="Click to edit historical marks weightage">
+                      ${isHighYield ? '★ ' : ''}+${ch.minMarks} to +${ch.maxMarks}m
+                      <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"></path><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path></svg>
+                    </span>
+
+                    ${isMastered ? '<span class="badge-pill badge-emerald" style="font-size: 0.65rem; padding: 0.1rem 0.4rem;">Mastered (+'+ch.minMarks+'–'+ch.maxMarks+'m)</span>' : ''}
+                    ${isInProgress ? '<span class="badge-pill badge-amber" style="font-size: 0.65rem; padding: 0.1rem 0.4rem;">'+checks+'/3 Done (0m added)</span>' : ''}
+                  </div>
+                </div>
+
+                <div class="chapter-actions">
+                  <!-- Quick Master / Reset toggle button -->
+                  <button class="btn-icon" onclick="toggleChapterMastery('${ch.id}')" title="${isMastered ? 'Reset All Checkboxes' : 'Check All 3 Boxes (Master)'}">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="${isMastered ? '#10b981' : 'currentColor'}" stroke-width="2.2">
+                      <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                      <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                    </svg>
+                  </button>
+
+                  <!-- Delete Custom Chapter Button -->
+                  ${ch.isCustom ? `
+                    <button class="btn-icon" style="color: #fb7185;" onclick="deleteChapter('${ch.id}')" title="Delete custom chapter">
+                      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+                    </button>
+                  ` : ''}
+                </div>
+              </div>
+
+              <!-- 3 Interactive Checkboxes -->
+              <div class="checkbox-group">
+                <label class="check-btn-label ${ch.completed ? 'checked' : ''}" title="Lectures & Theory Notes">
+                  <input type="checkbox" ${ch.completed ? 'checked' : ''} onchange="toggleCheckbox('${ch.id}', 'completed', this.checked)">
+                  <span>Completed</span>
+                </label>
+
+                <label class="check-btn-label ${ch.revision ? 'checked' : ''}" title="Formula Revision & Short Notes">
+                  <input type="checkbox" ${ch.revision ? 'checked' : ''} onchange="toggleCheckbox('${ch.id}', 'revision', this.checked)">
+                  <span>Revision</span>
+                </label>
+
+                <label class="check-btn-label ${ch.practice ? 'checked' : ''}" title="50+ PYQs & Timed Practice">
+                  <input type="checkbox" ${ch.practice ? 'checked' : ''} onchange="toggleCheckbox('${ch.id}', 'practice', this.checked)">
+                  <span>Practice</span>
+                </label>
+              </div>
+            </div>
+          `;
+        }).join('');
+      });
+    }
+
+    /* =====================================================================
+       SMART RECOMMENDATION ENGINE
+       ===================================================================== */
+    function renderSmartRecommendations() {
+      // Find top 3 chapters to study next:
+      // Criteria:
+      // 1. In-progress chapters with 2 checks (needs just 1 check to master and gain 4-12 marks!)
+      // 2. In-progress chapters with 1 check
+      // 3. High-yield unfinished chapters with highest maxMarks
+      const unfinished = state.chapters.filter(ch => !isChapterMastered(ch));
+
+      unfinished.sort((a, b) => {
+        const checksA = getChapterCheckCount(a);
+        const checksB = getChapterCheckCount(b);
+        if (checksA !== checksB) return checksB - checksA; // 2 checks before 1 check
+        return (b.maxMarks - a.maxMarks) || (b.minMarks - a.minMarks);
+      });
+
+      const top3 = unfinished.slice(0, 3);
+      const container = document.getElementById('smart-rec-chips');
+
+      if (top3.length === 0) {
+        container.innerHTML = `<span class="badge-pill badge-emerald" style="font-size: 0.8rem;">🎉 All chapters mastered! Keep revising mock tests!</span>`;
+        return;
+      }
+
+      container.innerHTML = top3.map(ch => {
+        const checks = getChapterCheckCount(ch);
+        const missing = [];
+        if (!ch.completed) missing.push('Theory');
+        if (!ch.revision) missing.push('Revision');
+        if (!ch.practice) missing.push('PYQs');
+
+        const subColor = ch.subject === 'physics' ? 'var(--physics-color)' : 
+                         ch.subject === 'chemistry' ? 'var(--chem-color)' : 'var(--math-color)';
+
+        return `
+          <div class="rec-item-chip" onclick="focusChapter('${ch.id}', '${ch.subject}')" title="Click to view chapter in ${ch.subject}">
+            <span style="color: ${subColor}; font-weight: 800;">●</span>
+            <span>${escapeHtml(ch.name)}</span>
+            <span class="badge-pill badge-amber font-mono" style="font-size: 0.65rem;">+${ch.maxMarks}m</span>
+            <span style="color: var(--text-faint); font-size: 0.7rem;">(Need: ${missing.join(', ')})</span>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function focusChapter(chapterId, subject) {
+      if (isMobileScreen() || state.viewMode === 'tabs') {
+        setSubjectTab(subject);
+      }
+      setTimeout(() => {
+        const card = document.getElementById(`ch-card-${chapterId}`);
+        if (card) {
+          card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          card.style.transition = 'box-shadow 0.3s, transform 0.3s';
+          card.style.boxShadow = '0 0 25px rgba(56, 189, 248, 0.8)';
+          card.style.transform = 'scale(1.02)';
+          setTimeout(() => {
+            card.style.boxShadow = '';
+            card.style.transform = '';
+          }, 1500);
+        }
+      }, 100);
+    }
+
+    /* =====================================================================
+       INTERACTION HANDLERS & SCORING LOGIC
+       ===================================================================== */
+    function toggleCheckbox(id, field, value) {
+      const ch = state.chapters.find(c => c.id === id);
+      if (!ch) return;
+
+      const wasMasteredBefore = isChapterMastered(ch);
+      ch[field] = value;
+      const isMasteredNow = isChapterMastered(ch);
+
+      saveState();
+      renderDashboard();
+
+      // Trigger Confetti & Sound/Toast if just mastered
+      if (!wasMasteredBefore && isMasteredNow) {
+        triggerConfetti();
+        showToast(`🎉 Mastered: ${ch.name} (+${ch.minMarks} to +${ch.maxMarks} marks added!)`);
+      }
+    }
+
+    function toggleChapterMastery(id) {
+      const ch = state.chapters.find(c => c.id === id);
+      if (!ch) return;
+
+      const mastered = isChapterMastered(ch);
+      if (mastered) {
+        ch.completed = false;
+        ch.revision = false;
+        ch.practice = false;
+        showToast(`Reset progress for ${ch.name}`);
+      } else {
+        ch.completed = true;
+        ch.revision = true;
+        ch.practice = true;
+        triggerConfetti();
+        showToast(`🎉 Mastered: ${ch.name} (+${ch.minMarks} to +${ch.maxMarks} marks added!)`);
+      }
+
+      saveState();
+      renderDashboard();
+    }
+
+    function batchToggleSubject(subject) {
+      const subjectChapters = state.chapters.filter(c => c.subject === subject);
+      const allMastered = subjectChapters.every(c => isChapterMastered(c));
+
+      subjectChapters.forEach(c => {
+        c.completed = !allMastered;
+        c.revision = !allMastered;
+        c.practice = !allMastered;
+      });
+
+      saveState();
+      renderDashboard();
+
+      if (!allMastered) {
+        triggerConfetti();
+        showToast(`🚀 All ${subject} chapters marked as mastered!`);
+      } else {
+        showToast(`Reset all check states for ${subject}`);
+      }
+    }
+
+    function updateTargetScore(val) {
+      const num = Math.min(300, Math.max(0, parseInt(val, 10) || 0));
+      state.targetScore = num;
+      saveState();
+      renderDashboard();
+    }
+
+    function setTargetPreset(val) {
+      document.getElementById('target-score-input').value = val;
+      updateTargetScore(val);
+      showToast(`Target score updated to ${val} / 300`);
+    }
+
+    /* =====================================================================
+       FILTERS, SEARCH & VIEW MODE
+       ===================================================================== */
+    function setFilter(filterType) {
+      state.activeFilter = filterType;
+      document.querySelectorAll('#filter-buttons .filter-pill').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.filter === filterType);
+      });
+      renderChapters();
+    }
+
+    function setSort(sortType) {
+      state.activeSort = sortType;
+      renderChapters();
+    }
+
+    function handleSearch(query) {
+      state.searchQuery = query;
+      renderChapters();
+    }
+
+    function isMobileScreen() {
+      return window.innerWidth < 768;
+    }
+
+    function setViewMode(mode) {
+      state.viewMode = mode;
+      saveState();
+      updateResponsiveLayout();
+    }
+
+    function setSubjectTab(subject) {
+      state.activeSubjectTab = subject;
+      applySubjectVisibility();
+      updateTabButtonsUI();
+    }
+
+    function applySubjectVisibility() {
+      const isMobile = isMobileScreen();
+      const pcmGrid = document.getElementById('pcm-container');
+      const activeSub = state.activeSubjectTab || 'physics';
+
+      if (isMobile || state.viewMode === 'tabs') {
+        if (pcmGrid) {
+          pcmGrid.classList.remove('cols-3');
+          pcmGrid.classList.add('cols-1');
+        }
+        ['physics', 'chemistry', 'mathematics'].forEach(s => {
+          const col = document.getElementById(`col-${s}`);
+          if (col) {
+            col.style.display = (s === activeSub) ? 'flex' : 'none';
+          }
+        });
+      } else {
+        // Desktop Multi-Column Grid Mode
+        if (pcmGrid) {
+          pcmGrid.classList.remove('cols-1');
+          pcmGrid.classList.add('cols-3');
+        }
+        ['physics', 'chemistry', 'mathematics'].forEach(s => {
+          const col = document.getElementById(`col-${s}`);
+          if (col) col.style.display = 'flex';
+        });
+      }
+    }
+
+    function updateTabButtonsUI() {
+      const activeSub = state.activeSubjectTab || 'physics';
+      ['physics', 'chemistry', 'mathematics'].forEach(s => {
+        const tabBtn = document.getElementById(`tab-${s}`);
+        if (!tabBtn) return;
+        const isActive = (s === activeSub);
+        tabBtn.classList.toggle('active', isActive);
+      });
+    }
+
+    function updateResponsiveLayout() {
+      const isMobile = isMobileScreen();
+      const tabBar = document.getElementById('subject-tab-bar');
+      const btnGrid = document.getElementById('view-mode-grid');
+      const btnTabs = document.getElementById('view-mode-tabs');
+
+      if (isMobile) {
+        if (tabBar) tabBar.style.display = 'block';
+        applySubjectVisibility();
+      } else {
+        if (btnGrid && btnTabs) {
+          btnGrid.classList.toggle('active', state.viewMode === 'grid');
+          btnTabs.classList.toggle('active', state.viewMode === 'tabs');
+        }
+        if (state.viewMode === 'grid') {
+          if (tabBar) tabBar.style.display = 'none';
+          applySubjectVisibility();
+        } else {
+          if (tabBar) tabBar.style.display = 'block';
+          applySubjectVisibility();
+        }
+      }
+      updateTabButtonsUI();
+    }
+
+    /* =====================================================================
+       MODAL DIALOGS (DATE, CHAPTER, RESET, MARKS)
+       ===================================================================== */
+    function openModal(id) {
+      document.getElementById(id).classList.add('open');
+    }
+
+    function closeModal(id) {
+      document.getElementById(id).classList.remove('open');
+    }
+
+    // Exam Date Modal
+    function openDateModal() {
+      // populate current value
+      const picker = document.getElementById('modal-date-picker');
+      picker.value = state.targetExamDate.slice(0, 16);
+      openModal('modal-date');
+    }
+
+    function setDatePreset(isoDateStr) {
+      document.getElementById('modal-date-picker').value = isoDateStr.slice(0, 16);
+    }
+
+    function saveExamDate() {
+      const picker = document.getElementById('modal-date-picker');
+      if (picker.value) {
+        state.targetExamDate = picker.value + ':00';
+        saveState();
+        startCountdown();
+        closeModal('modal-date');
+        showToast(`Target exam date updated to ${formatExamDateDisplay(state.targetExamDate)}`);
+      }
+    }
+
+    // Add Chapter Modal
+    function openAddChapterModal() {
+      document.getElementById('modal-chapter-heading').textContent = 'Add Custom Chapter';
+      document.getElementById('edit-chapter-id').value = '';
+      document.getElementById('modal-ch-name').value = '';
+      document.getElementById('modal-ch-min').value = '4';
+      document.getElementById('modal-ch-max').value = '8';
+      openModal('modal-chapter');
+    }
+
+    function saveChapter() {
+      const id = document.getElementById('edit-chapter-id').value;
+      const subject = document.getElementById('modal-ch-subject').value;
+      const name = document.getElementById('modal-ch-name').value.trim();
+      const minMarks = Math.max(0, parseInt(document.getElementById('modal-ch-min').value, 10) || 4);
+      const maxMarks = Math.max(minMarks, parseInt(document.getElementById('modal-ch-max').value, 10) || minMarks);
+
+      if (!name) {
+        alert('Please enter a chapter name.');
+        return;
+      }
+
+      if (id) {
+        // Edit existing
+        const ch = state.chapters.find(c => c.id === id);
+        if (ch) {
+          ch.name = name;
+          ch.subject = subject;
+          ch.minMarks = minMarks;
+          ch.maxMarks = maxMarks;
+        }
+      } else {
+        // Add new
+        const newId = 'cust_' + Date.now();
+        state.chapters.push({
+          id: newId,
+          subject,
+          name,
+          minMarks,
+          maxMarks,
+          completed: false,
+          revision: false,
+          practice: false,
+          isCustom: true
+        });
+      }
+
+      saveState();
+      renderDashboard();
+      closeModal('modal-chapter');
+      showToast(`Chapter "${name}" saved!`);
+    }
+
+    function deleteChapter(id) {
+      const ch = state.chapters.find(c => c.id === id);
+      if (!ch) return;
+      if (confirm(`Delete custom chapter "${ch.name}"?`)) {
+        state.chapters = state.chapters.filter(c => c.id !== id);
+        saveState();
+        renderDashboard();
+        showToast(`Chapter deleted.`);
+      }
+    }
+
+    // Inline Marks Modal
+    function openInlineMarksModal(id) {
+      const ch = state.chapters.find(c => c.id === id);
+      if (!ch) return;
+
+      document.getElementById('inline-marks-id').value = ch.id;
+      document.getElementById('inline-marks-ch-title').textContent = `${ch.name} (${ch.subject.toUpperCase()})`;
+      document.getElementById('inline-min-input').value = ch.minMarks;
+      document.getElementById('inline-max-input').value = ch.maxMarks;
+      openModal('modal-inline-marks');
+    }
+
+    function saveInlineMarks() {
+      const id = document.getElementById('inline-marks-id').value;
+      const ch = state.chapters.find(c => c.id === id);
+      if (!ch) return;
+
+      const minVal = Math.max(0, parseInt(document.getElementById('inline-min-input').value, 10) || 0);
+      const maxVal = Math.max(minVal, parseInt(document.getElementById('inline-max-input').value, 10) || minVal);
+
+      ch.minMarks = minVal;
+      ch.maxMarks = maxVal;
+
+      saveState();
+      renderDashboard();
+      closeModal('modal-inline-marks');
+      showToast(`Updated marks weightage for ${ch.name}`);
+    }
+
+    // Reset Modal
+    function openResetModal() {
+      openModal('modal-reset');
+    }
+
+    function confirmResetDefaults() {
+      state.chapters = JSON.parse(JSON.stringify(DEFAULT_SYLLABUS));
+      state.targetScore = 150;
+      state.targetExamDate = '2027-01-22T09:00:00';
+      saveState();
+      startCountdown();
+      renderDashboard();
+      closeModal('modal-reset');
+      showToast('Syllabus reset to default state.');
+    }
+
+    /* =====================================================================
+       BACKUP / RESTORE JSON (EXPORT & IMPORT)
+       ===================================================================== */
+    function exportData() {
+      const exportObject = {
+        app: "JEE_Mains_Countdown_Marks_Predictor",
+        version: "2.0",
+        exportedAt: new Date().toISOString(),
+        targetExamDate: state.targetExamDate,
+        targetScore: state.targetScore,
+        chapters: state.chapters
+      };
+
+      const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(exportObject, null, 2));
+      const downloadAnchor = document.createElement('a');
+      const datePart = new Date().toISOString().slice(0, 10);
+      downloadAnchor.setAttribute("href", dataStr);
+      downloadAnchor.setAttribute("download", `jee-mains-tracker-backup-${datePart}.json`);
+      document.body.appendChild(downloadAnchor);
+      downloadAnchor.click();
+      downloadAnchor.remove();
+
+      showToast('✓ Backup JSON exported successfully');
+    }
+
+    function triggerImport() {
+      document.getElementById('import-file-input').click();
+    }
+
+    function handleFileImport(event) {
+      const file = event.target.files && event.target.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        try {
+          const parsed = JSON.parse(e.target.result);
+          if (Array.isArray(parsed.chapters)) {
+            state.chapters = parsed.chapters;
+            if (parsed.targetExamDate) state.targetExamDate = parsed.targetExamDate;
+            if (typeof parsed.targetScore === 'number') state.targetScore = parsed.targetScore;
+
+            saveState();
+            startCountdown();
+            renderDashboard();
+            showToast('✓ Backup restored successfully!');
+          } else {
+            alert('Invalid backup file format: missing chapters array.');
+          }
+        } catch (err) {
+          alert('Failed to parse backup JSON file: ' + err.message);
+        }
+        event.target.value = ''; // reset input
+      };
+      reader.readAsText(file);
+    }
+
+    /* =====================================================================
+       CONFETTI CELEBRATION ENGINE (PURE CANVAS, ZERO DEPENDENCY)
+       ===================================================================== */
+    const canvas = document.getElementById('confetti-canvas');
+    const ctx = canvas.getContext('2d');
+    let confettiParticles = [];
+    let confettiAnimationId = null;
+
+    function resizeCanvas() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    }
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
+
+    function triggerConfetti() {
+      const count = 70;
+      const colors = ['#10b981', '#38bdf8', '#fbbf24', '#ec4899', '#a855f7', '#ffffff'];
+
+      for (let i = 0; i < count; i++) {
+        confettiParticles.push({
+          x: Math.random() * canvas.width,
+          y: -20,
+          w: Math.random() * 8 + 4,
+          h: Math.random() * 6 + 4,
+          vx: (Math.random() - 0.5) * 5,
+          vy: Math.random() * 4 + 3,
+          color: colors[Math.floor(Math.random() * colors.length)],
+          rotation: Math.random() * 360,
+          vRot: (Math.random() - 0.5) * 8,
+          alpha: 1
+        });
+      }
+
+      if (!confettiAnimationId) {
+        animateConfetti();
+      }
+    }
+
+    function animateConfetti() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      for (let i = confettiParticles.length - 1; i >= 0; i--) {
+        const p = confettiParticles[i];
+        p.x += p.vx;
+        p.y += p.vy;
+        p.rotation += p.vRot;
+        p.alpha -= 0.007;
+
+        if (p.y > canvas.height || p.alpha <= 0) {
+          confettiParticles.splice(i, 1);
+          continue;
+        }
+
+        ctx.save();
+        ctx.translate(p.x, p.y);
+        ctx.rotate((p.rotation * Math.PI) / 180);
+        ctx.globalAlpha = Math.max(0, p.alpha);
+        ctx.fillStyle = p.color;
+        ctx.fillRect(-p.w / 2, -p.h / 2, p.w, p.h);
+        ctx.restore();
+      }
+
+      if (confettiParticles.length > 0) {
+        confettiAnimationId = requestAnimationFrame(animateConfetti);
+      } else {
+        confettiAnimationId = null;
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+      }
+    }
+
+    /* =====================================================================
+       TOAST NOTIFICATIONS
+       ===================================================================== */
+    function showToast(message) {
+      const container = document.getElementById('toast-container');
+      const toast = document.createElement('div');
+      toast.className = 'toast';
+      toast.innerHTML = `
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2.5">
+          <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+          <polyline points="22 4 12 14.01 9 11.01"></polyline>
+        </svg>
+        <span>${escapeHtml(message)}</span>
+      `;
+      container.appendChild(toast);
+
+      setTimeout(() => {
+        toast.style.opacity = '0';
+        toast.style.transform = 'translateY(10px)';
+        toast.style.transition = 'opacity 0.25s, transform 0.25s';
+        setTimeout(() => toast.remove(), 250);
+      }, 3200);
+    }
+
+    function escapeHtml(str) {
+      if (!str) return '';
+      return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+    }
+
+    /* =====================================================================
+       INITIALIZATION & EVENT LISTENERS
+       ===================================================================== */
+    window.addEventListener('DOMContentLoaded', () => {
+      loadState();
+      document.getElementById('target-score-input').value = state.targetScore;
+      startCountdown();
+      updateResponsiveLayout();
+      renderDashboard();
+
+      // Close modal on backdrop click
+      document.querySelectorAll('.modal-backdrop').forEach(modal => {
+        modal.addEventListener('click', (e) => {
+          if (e.target === modal) {
+            modal.classList.remove('open');
+          }
+        });
+      });
+
+      // Close modal on Escape key
+      window.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+          document.querySelectorAll('.modal-backdrop.open').forEach(m => m.classList.remove('open'));
+        }
+      });
+
+      // Responsive layout resize handler
+      window.addEventListener('resize', () => {
+        resizeCanvas();
+        updateResponsiveLayout();
+      });
+    });
+  </script>
+</body>
+</html>
